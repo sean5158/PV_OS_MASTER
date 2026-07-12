@@ -1,0 +1,148 @@
+name: lead_scoring_agent
+
+version: 1.0
+
+description: >
+  PV_OS 光伏行业客户价值评分Agent，
+  用于自动判断客户购买价值和销售优先级。
+
+
+purpose:
+
+  - 客户线索评分
+  - 购买意向判断
+  - 客户优先级排序
+  - Hot Lead识别
+
+
+input:
+
+  source:
+
+    - 05_CUSTOMER_CRM/leads/
+
+
+  fields:
+
+    - customer_type
+    - intent_level
+    - source_platform
+    - tags
+    - source_content
+
+
+
+scoring:
+
+
+  range:
+
+    min: 0
+
+    max: 100
+
+
+
+  intent_score:
+
+
+    purchase:
+
+      score: 40
+
+
+    price_inquiry:
+
+      score: 30
+
+
+    product_interest:
+
+      score: 15
+
+
+
+  customer_type_score:
+
+
+    villa:
+
+      score: 20
+
+
+    commercial:
+
+      score: 20
+
+
+    family:
+
+      score: 10
+
+
+
+  keyword_score:
+
+
+    installation:
+
+      score: 10
+
+
+    quotation:
+
+      score: 15
+
+
+    revenue:
+
+      score: 10
+
+
+
+output:
+
+
+  hot_leads:
+
+    score:
+
+      min: 80
+
+    path:
+
+      - 05_CUSTOMER_CRM/leads/hot/
+
+
+
+  qualified_leads:
+
+    score:
+
+      min: 50
+
+      max: 79
+
+    path:
+
+      - 05_CUSTOMER_CRM/leads/qualified/
+
+
+
+  raw_leads:
+
+    score:
+
+      min: 0
+
+      max: 49
+
+    path:
+
+      - 05_CUSTOMER_CRM/leads/raw/
+
+
+
+status:
+
+  development: true
