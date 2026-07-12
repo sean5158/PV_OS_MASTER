@@ -1,0 +1,62 @@
+name: comment_to_lead_pipeline
+
+version: 1.0
+
+description:
+  光伏评论自动转客户线索流程
+
+
+trigger:
+
+  event:
+    - new_comment_received
+
+
+steps:
+
+
+  - name: collect_comment
+
+    input:
+      path:
+        - 02_DATA/raw/
+
+
+  - name: analyze_comment
+
+    agent:
+      - comment_analyzer
+
+
+  - name: score_customer
+
+    agent:
+      - lead_scoring_agent
+
+
+  - name: create_crm_lead
+
+    output:
+
+      path:
+        - 05_CUSTOMER_CRM/leads/
+
+
+  - name: generate_follow_up
+
+    output:
+
+      path:
+        - 05_CUSTOMER_CRM/follow_ups/
+
+
+status:
+
+  enabled: true
+
+
+version_history:
+
+  - version: V1.0
+    date: 2026-07-12
+    note: 创建评论到客户线索自动流程
