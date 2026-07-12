@@ -1,0 +1,22 @@
+# secrets
+.env
+*.key
+*.token
+
+# runtime
+12_AI_RUNTIME/logs/
+12_AI_RUNTIME/models/
+
+# raw data
+02_DATA/raw/
+
+# temporary
+*.tmp
+.DS_Store
+
+# python
+__pycache__/
+*.pyc
+
+# node
+node_modules/
