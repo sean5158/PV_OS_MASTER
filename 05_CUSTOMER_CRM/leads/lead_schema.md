@@ -7,10 +7,10 @@
 
 # 一、基础信息
 
+
 ## lead_id
 
 客户线索编号
-
 
 示例：
 
@@ -18,6 +18,7 @@ PV_LEAD_000001
 
 
 ---
+
 
 ## source_platform
 
@@ -36,6 +37,7 @@ wechat_video
 
 ---
 
+
 ## source_content
 
 原始评论内容
@@ -43,12 +45,14 @@ wechat_video
 
 ---
 
+
 ## source_url
 
 来源链接
 
 
 ---
+
 
 # 二、客户信息
 
@@ -70,12 +74,14 @@ wechat_video
 
 ---
 
+
 ## location
 
 地区信息
 
 
 ---
+
 
 ## house_type
 
@@ -93,6 +99,7 @@ wechat_video
 
 
 ---
+
 
 # 三、AI评分
 
@@ -112,6 +119,7 @@ wechat_video
 
 ---
 
+
 ## lead_score
 
 客户评分：
@@ -120,6 +128,7 @@ wechat_video
 
 
 ---
+
 
 ## tags
 
@@ -138,6 +147,7 @@ wechat_video
 
 
 ---
+
 
 # 四、销售状态
 
@@ -159,6 +169,7 @@ closed
 
 ---
 
+
 ## next_action
 
 下一步动作：
@@ -174,9 +185,10 @@ closed
 
 ---
 
+
 # 五、版本记录
 
 
 |版本|日期|说明|
 |-|-|-|
-|V1.0|2026-07-12|建立CRM客户线索标准|
+|V1.0|2026-07-12|建立PV_OS CRM客户线索标准|
