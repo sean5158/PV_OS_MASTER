@@ -1,0 +1,69 @@
+[
+  {
+    "id": "SC001",
+    "customer_type": "别墅用户",
+    "intent_level": 2,
+    "lead_score": 90,
+    "classification": "high",
+    "decision": "进入销售线索",
+    "reason": [
+      "四川成都",
+      "别墅场景",
+      "询问安装价格"
+    ],
+    "next_action": "联系了解屋顶面积和用电情况"
+  },
+  {
+    "id": "SC002",
+    "customer_type": "高端住宅",
+    "intent_level": 2,
+    "lead_score": 85,
+    "classification": "high",
+    "decision": "进入销售线索",
+    "reason": [
+      "阳光房场景",
+      "改造需求"
+    ],
+    "next_action": "提供别墅光伏设计案例"
+  },
+  {
+    "id": "SC003",
+    "customer_type": "农村用户",
+    "intent_level": 1,
+    "lead_score": 20,
+    "classification": "reject",
+    "decision": "不进入CRM",
+    "reason": [
+      "免费光伏需求",
+      "商业模式不匹配"
+    ],
+    "next_action": "忽略"
+  },
+  {
+    "id": "SC004",
+    "customer_type": "别墅用户",
+    "intent_level": 2,
+    "lead_score": 95,
+    "classification": "high",
+    "decision": "进入销售线索",
+    "reason": [
+      "成都",
+      "装修阶段",
+      "储能需求"
+    ],
+    "next_action": "提前介入设计方案"
+  },
+  {
+    "id": "SC005",
+    "customer_type": "未知",
+    "intent_level": 0,
+    "lead_score": 0,
+    "classification": "reject",
+    "decision": "不进入CRM",
+    "reason": [
+      "加盟招商",
+      "非终端客户"
+    ],
+    "next_action": "忽略"
+  }
+]

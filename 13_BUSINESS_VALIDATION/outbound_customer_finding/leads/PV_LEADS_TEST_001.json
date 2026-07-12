@@ -1,0 +1,29 @@
+[
+  {
+    "lead_id": "PV_LEAD_SC001",
+    "region": "四川成都",
+    "customer_type": "别墅用户",
+    "source": "抖音",
+    "signal": "询问别墅安装光伏价格",
+    "score": 90,
+    "status": "待跟进"
+  },
+  {
+    "lead_id": "PV_LEAD_SC002",
+    "region": "四川成都",
+    "customer_type": "高端住宅",
+    "source": "小红书",
+    "signal": "阳光房改造需求",
+    "score": 85,
+    "status": "待跟进"
+  },
+  {
+    "lead_id": "PV_LEAD_SC004",
+    "region": "四川成都",
+    "customer_type": "别墅用户",
+    "source": "小红书",
+    "signal": "装修阶段考虑光伏和储能",
+    "score": 95,
+    "status": "优先跟进"
+  }
+]

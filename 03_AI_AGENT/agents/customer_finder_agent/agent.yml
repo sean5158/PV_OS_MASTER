@@ -1,0 +1,140 @@
+name: customer_finder_agent
+
+version: V1.0
+
+description: >
+  PV_OS主动客户发现Agent。
+  用于从输入数据中识别潜在光伏客户，
+  判断购买意向，并生成销售线索。
+
+
+mission:
+  primary_goal: >
+    发现真实光伏销售机会，而不是产生大量无效数据。
+
+
+business_priority:
+  level: P0
+  category: customer_acquisition
+
+
+input:
+
+  source:
+    type: string
+    description: 数据来源平台
+
+  content:
+    type: string
+    description: 原始内容或用户行为信息
+
+  url:
+    type: string
+    required: false
+
+  timestamp:
+    type: string
+    required: false
+
+
+
+analysis_rules:
+
+  customer_type:
+
+    allowed:
+      - 家庭用户
+      - 别墅用户
+      - 农村用户
+      - 商业用户
+      - 未知
+
+
+  intent_level:
+
+    scale:
+      0: 无需求
+      1: 潜在兴趣
+      2: 咨询意向
+      3: 明确购买
+
+
+
+  scoring:
+
+    range:
+      min: 0
+      max: 100
+
+
+    priority:
+
+      high:
+        min_score: 80
+
+      medium:
+        min_score: 50
+
+      low:
+        min_score: 0
+
+
+
+output:
+
+  lead_id:
+    format: PV_LEAD_xxxxxx
+
+
+  customer_type:
+
+  intent_level:
+
+  lead_score:
+
+
+  tags:
+
+
+  next_action:
+
+
+
+workflow:
+
+  - receive_source_data
+
+  - analyze_customer_signal
+
+  - classify_customer
+
+  - calculate_score
+
+  - generate_lead
+
+  - send_to_crm
+
+
+
+crm_target:
+
+  path:
+    05_CUSTOMER_CRM/leads
+
+
+validation:
+
+  must_answer:
+
+    - 是否存在光伏需求信号
+    - 是否值得销售跟进
+    - 下一步行动是什么
+
+
+constraints:
+
+  forbidden:
+
+    - 无需求用户进入CRM
+    - 为增加数量降低质量
+    - 脱离商业目标的分析

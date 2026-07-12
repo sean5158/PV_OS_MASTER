@@ -1,0 +1,55 @@
+version: V1.0
+
+
+score_range:
+
+  min: 0
+  max: 100
+
+
+positive:
+
+  villa:
+    score: 30
+
+  high_end_residence:
+    score: 25
+
+  storage_interest:
+    score: 20
+
+  price_question:
+    score: 15
+
+  installation_question:
+    score: 20
+
+  Sichuan_city:
+    score: 10
+
+
+negative:
+
+  rural_free_pv:
+    score: -50
+
+  recruitment:
+    score: -80
+
+
+classification:
+
+
+  high:
+
+    min_score: 80
+
+
+  medium:
+
+    min_score: 50
+
+
+  low:
+
+    min_score: 0

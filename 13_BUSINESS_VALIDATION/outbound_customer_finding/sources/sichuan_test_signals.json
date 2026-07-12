@@ -1,0 +1,47 @@
+[
+  {
+    "id": "SC001",
+    "platform": "抖音",
+    "keyword": "成都别墅光伏",
+    "content": "成都别墅安装光伏案例，独栋住宅屋顶设计",
+    "comment": "我家成都双流别墅可以安装吗？大概多少钱？",
+    "region": "四川成都",
+    "timestamp": "2026-07-12"
+  },
+  {
+    "id": "SC002",
+    "platform": "小红书",
+    "keyword": "成都阳光房光伏",
+    "content": "别墅阳光房结合光伏设计",
+    "comment": "想改造我家的阳光房，不知道能不能装",
+    "region": "四川成都",
+    "timestamp": "2026-07-12"
+  },
+  {
+    "id": "SC003",
+    "platform": "抖音",
+    "keyword": "四川光伏安装",
+    "content": "农村屋顶免费安装光伏",
+    "comment": "免费装是真的吗？",
+    "region": "四川农村",
+    "timestamp": "2026-07-12"
+  },
+  {
+    "id": "SC004",
+    "platform": "小红书",
+    "keyword": "成都别墅装修",
+    "content": "高端住宅装修案例",
+    "comment": "正在装修别墅，考虑增加储能和光伏",
+    "region": "四川成都",
+    "timestamp": "2026-07-12"
+  },
+  {
+    "id": "SC005",
+    "platform": "抖音",
+    "keyword": "光伏加盟",
+    "content": "光伏代理招商",
+    "comment": "想做代理加盟",
+    "region": "四川",
+    "timestamp": "2026-07-12"
+  }
+]
