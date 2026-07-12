@@ -1,0 +1,47 @@
+name: comment_analyzer
+
+version: 1.0
+
+description: >
+  PV_OS光伏行业评论客户识别Agent
+
+purpose:
+  - 评论内容分析
+  - 客户需求识别
+  - 购买意向评分
+  - 客户标签生成
+
+input:
+  source:
+    - 02_DATA/raw/
+
+  schema:
+    - 02_DATA/data_dict/comment_schema.md
+
+
+analysis:
+  customer_type:
+    - 家庭用户
+    - 别墅用户
+    - 小商业用户
+    - 同行业用户
+    - 无关用户
+
+  intent_level:
+    0: 无需求
+    1: 潜在兴趣
+    2: 咨询意向
+    3: 明确购买意向
+
+  score:
+    range: 0-100
+
+
+output:
+
+  path:
+    - 05_CUSTOMER_CRM/leads/
+
+
+status:
+  development: true
