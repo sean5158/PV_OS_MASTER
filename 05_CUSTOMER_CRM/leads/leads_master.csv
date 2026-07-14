@@ -1,0 +1,8 @@
+lead_id,platform,comment_text,city,district,province,customer_type,housing_type,demand_signals,lead_score,lead_grade,contact_intent,urgency,status,created_at
+PV_LEAD_FC427CC5,douyin,我家在成都郊区别墅，想装一套光伏系统，能报个价吗？电话联系138xxxx,四川成都,,四川成都,别墅用户,别墅,安装需求|高意向,96,S,True,high,new,2026-07-13 13:42:21
+PV_LEAD_30F3DC47,douyin,农村自建房想装光伏发电，大概多少钱？有补贴吗,重庆,,重庆,家庭用户,农村自建房,安装需求|价格咨询,72,A,True,medium,new,2026-07-13 13:42:21
+PV_LEAD_8403A0A8,douyin,我家在成都郊区别墅，想装一套光伏系统，能报个价吗？电话联系138xxxx,四川成都,,四川成都,别墅用户,别墅,安装需求|高意向,96,S,True,high,new,2026-07-13 13:42:46
+PV_LEAD_C216A8A8,douyin,农村自建房想装光伏发电，大概多少钱？有补贴吗,重庆,,重庆,家庭用户,农村自建房,安装需求|价格咨询,72,A,True,medium,new,2026-07-13 13:42:46
+PV_LEAD_8AA5BB70,douyin,别墅想装光伏，报价多少？,四川成都,,四川成都,别墅用户,别墅,安装需求|价格咨询,81,S,True,high,new,2026-07-13 13:42:46
+PV_LEAD_A358D7D9,douyin,别墅光伏安装报价联系电话,四川成都,,四川成都,别墅用户,别墅,安装需求|价格咨询|高意向,96,S,True,high,new,2026-07-13 13:42:46
+PV_LEAD_D6FE0066,douyin,我家在成都郊区别墅，想装一套光伏系统，能报个价吗？电话联系138xxxx,四川成都,,四川成都,别墅用户,别墅,安装需求|高意向,96,S,True,high,new,2026-07-13 13:42:50

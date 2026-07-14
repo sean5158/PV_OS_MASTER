@@ -1,9 +1,9 @@
 name: comment_to_lead_pipeline
 
-version: 1.0
+version: 1.1
 
 description:
-  光伏评论自动转客户线索流程
+  光伏评论自动分析、客户评分、线索分流流程
 
 
 trigger:
@@ -15,6 +15,8 @@ trigger:
 steps:
 
 
+  # 1. 评论采集
+
   - name: collect_comment
 
     input:
@@ -22,11 +24,57 @@ steps:
         - 02_DATA/raw/
 
 
+  # 2. 评论资产保存
+
+  - name: save_comment_asset
+
+    output:
+
+      path:
+        - 05_CUSTOMER_LEADS/comment_asset_library.csv
+
+    rule:
+
+      keep_history: true
+
+      note:
+        全量保存评论，不因时间淘汰
+
+
+  # 3. 时间价值判断
+
+  - name: evaluate_comment_time
+
+    rule:
+
+      recent_window:
+        days: 7
+
+      recent_comments:
+        sales_priority: true
+
+      historical_comments:
+        asset_storage: true
+
+
+
+  # 4. AI评论分析
+
   - name: analyze_comment
 
     agent:
       - comment_analyzer
 
+
+    reference:
+
+      rules:
+        - 02_DATA/04_COMMENT_DATABASE/COMMENT_ANALYZER_RULE.md
+        - 02_DATA/04_COMMENT_DATABASE/COMMENT_TIME_AND_MATCH_RULE.md
+
+
+
+  # 5. 客户评分
 
   - name: score_customer
 
@@ -34,20 +82,91 @@ steps:
       - lead_scoring_agent
 
 
+    reference:
+
+      rules:
+        - 02_DATA/06_SCORE_MODEL/CUSTOMER_SCORE_MODEL.md
+
+
+
+  # 6. 客户分流
+
+
+  - name: route_customer
+
+
+    condition:
+
+
+      S_or_A:
+
+        output:
+
+          path:
+            - 05_CUSTOMER_LEADS/leads_master.csv
+
+
+      B:
+
+        output:
+
+          path:
+            - 05_CUSTOMER_LEADS/nurture_pool.csv
+
+
+      C:
+
+        output:
+
+          path:
+            - 05_CUSTOMER_LEADS/comment_asset_library.csv
+
+
+
+  # 7. CRM同步
+
   - name: create_crm_lead
 
-    output:
+    condition:
 
-      path:
-        - 05_CUSTOMER_CRM/leads/
+      if:
+        lead_grade: S
+
+      output:
+
+        path:
+          - 05_CUSTOMER_CRM/leads/hot/
+
+
+      else:
+
+        path:
+          - 05_CUSTOMER_CRM/leads/qualified/
+
+
+
+
+
+
+  # 8. 跟进任务生成
 
 
   - name: generate_follow_up
 
+
+    condition:
+
+      lead_grade:
+        - S
+        - A
+
+
     output:
 
       path:
+
         - 05_CUSTOMER_CRM/follow_ups/
+
 
 
 status:
@@ -55,8 +174,22 @@ status:
   enabled: true
 
 
+
 version_history:
 
+
   - version: V1.0
+
     date: 2026-07-12
-    note: 创建评论到客户线索自动流程
+
+    note:
+      创建评论到客户线索自动流程
+
+
+  - version: V1.1
+
+    date: 2026-07-12
+
+    note:
+      增加评论资产库、7天销售窗口、S/A/B/C客户分流、区域农村规则引用
+

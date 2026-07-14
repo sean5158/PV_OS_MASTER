@@ -1,0 +1,11 @@
+id,platform,content,author,create_time,source_url,ip_location,collected_time,processing_status
+douyin_test_S_001,douyin,我家在成都郊区别墅，想装一套光伏系统，能报个价吗？电话联系138xxxx,用户A,2026-07-12 10:00:00,https://douyin.com/video/test_s,四川成都,2026-07-13 13:42:21,collected
+douyin_test_A_001,douyin,农村自建房想装光伏发电，大概多少钱？有补贴吗,用户B,2026-07-10 14:00:00,https://douyin.com/video/test_a,重庆,2026-07-13 13:42:21,collected
+douyin_test_B_001,xiaohongshu,光伏发电靠谱吗？想了解一下,用户C,2026-07-01 09:00:00,https://xiaohongshu.com/note/test_b,贵州贵阳,2026-07-13 13:42:21,collected
+test_S_001,douyin,我家在成都郊区别墅，想装一套光伏系统，能报个价吗？电话联系138xxxx,高意向用户,2026-07-12 10:00:00,,四川成都,2026-07-13 13:42:46,collected
+test_A_001,douyin,农村自建房想装光伏发电，大概多少钱？有补贴吗,农村用户,2026-07-10 14:00:00,,重庆,2026-07-13 13:42:46,collected
+test_B_001,xiaohongshu,光伏发电靠谱吗？想了解一下,观望用户,2026-07-01 09:00:00,,贵州贵阳,2026-07-13 13:42:46,collected
+test_noerr,douyin,别墅想装光伏，报价多少？,test,2026-07-13 10:00:00,,四川成都,2026-07-13 13:42:46,collected
+cat_S,douyin,别墅光伏安装报价联系电话,x,2026-07-13 10:00:00,,四川成都,2026-07-13 13:42:46,collected
+cat_B,douyin,光伏了解一下,y,2026-07-01 10:00:00,,北京,2026-07-13 13:42:46,collected
+douyin_test_S_001,douyin,我家在成都郊区别墅，想装一套光伏系统，能报个价吗？电话联系138xxxx,用户A,2026-07-12 10:00:00,https://douyin.com/video/test_s,四川成都,2026-07-13 13:42:50,collected

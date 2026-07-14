@@ -1,14 +1,28 @@
-# PV_OS 目录地图 V1.0
+# PV_OS 目录地图 V1.1
 
 > 光伏行业 AI 自动化运营系统 · 目录结构定义与文件存放规范
 >
-> 最后更新：2026-07-11
+> 最后更新：2026-07-14
 
 ---
 
 ## 一、项目定位
 
 PV_OS 不是传统软件工程项目，而是一个**光伏行业 AI 自动化运营系统**。其核心是通过 AI Agent + 数据采集 + 内容生产 + CRM 跟踪，实现从"潜在客户发现 → 内容引流 → 客户评分 → 销售转化"的全链路自动化。
+
+客户生命周期分为两层：
+
+```
+公开数据（平台评论 / 内容互动 / 竞品评论）
+    │
+    ▼
+05_CUSTOMER_LEADS（AI 客户发现层）
+    │  负责：AI 发现 → 评论线索 → 评分结果 → 培育池
+    │
+    ▼
+05_CUSTOMER_CRM（销售管理层）
+    │  负责：销售跟进 → 联系记录 → 商机管理 → 成交客户
+```
 
 本目录地图定义：
 1. 每个一级目录的业务用途与边界
@@ -27,7 +41,8 @@ PV_OS_MASTER/
 ├── 02_DATA/                     # 数据资产
 ├── 03_AI_AGENT/                 # AI Agent 定义
 ├── 04_CONTENT/                  # 内容生产
-├── 05_CUSTOMER_CRM/             # 客户关系管理
+├── 05_CUSTOMER_LEADS/           # AI 客户发现层（线索评分、培育池）
+├── 05_CUSTOMER_CRM/             # 客户关系管理（销售管理层）
 ├── 06_CASE_LIBRARY/             # 案例库
 ├── 07_FINANCE/                  # 财务
 ├── 08_SYSTEM/                   # 系统技术实现
@@ -98,7 +113,7 @@ PV_OS_MASTER/
 - AI 客户评分（业务7）
 
 典型子目录结构：
-- `agents/` — 各 Agent 角色定义（如 `comment_analyzer`、`customer_scorer`）
+- `agents/` — 各 Agent 角色定义（如 `comment_analyzer`、`lead_scoring_agent`）
 - `prompts/` — Prompt 模板库
 - `strategies/` — 决策策略与规则引擎
 - `evals/` — Agent 输出质量评估
@@ -122,9 +137,55 @@ PV_OS_MASTER/
 
 ---
 
-### 05_CUSTOMER_CRM —— 客户关系管理
+### 05_CUSTOMER_LEADS —— AI 客户发现层
 
-存放客户信息、跟进记录、客户分级、销售漏斗等 CRM 相关数据与流程。
+存放 AI 从公开数据中发现的潜在客户线索。这是 PV_OS 客户生命周期的**第一层**：从原始数据中通过 AI 识别潜在客户。
+
+**定位：** AI 发现层 — 在销售介入之前，由 AI 完成客户线索的发现、评分和分类。
+
+**数据来源：**
+- 竞品评论区分析结果
+- 内容互动数据分析结果
+- 平台公开数据挖掘结果
+- 评论资产库中的潜在信号
+
+**生命周期：**
+
+```
+公开数据（平台评论 / 内容互动 / 竞品评论）
+    │
+    ▼
+05_CUSTOMER_LEADS（AI 客户发现层）
+    ├── comment_asset_library.csv   # 评论资产库（全量保存）
+    ├── leads_master.csv            # 客户线索主表（S/A 级）
+    ├── nurture_pool.csv            # 培育池（B 级）
+    ├── FIELD_MAPPING_RULE.md       # 字段映射规则（数据 → CRM）
+    └── scoring_results/            # 评分明细
+    │
+    ▼ 评分完成
+05_CUSTOMER_CRM（销售管理层）
+```
+
+**核心字段（从 AI 分析结果到 CRM 线索的映射）：**
+
+| AI 分析字段 | LEADS 字段 | CRM 字段 |
+|-----------|----------|---------|
+| platform | platform | location |
+| province / city / district | province / city / district | location |
+| housing_type | housing_type | house_type |
+| demand_signals | tags | tags |
+| total_score | ai_score | lead_score |
+| lead_grade | priority | intent_level |
+
+> 引用：`05_CUSTOMER_LEADS/FIELD_MAPPING_RULE.md` V1.0
+
+---
+
+### 05_CUSTOMER_CRM —— 销售管理层
+
+存放客户信息、跟进记录、客户分级、销售漏斗等 CRM 相关数据与流程。这是 PV_OS 客户生命周期的**第二层**：销售团队对已评分的客户线索进行跟进和转化。
+
+**定位：** 销售管理层 — 接收 05_CUSTOMER_LEADS 输出的评分结果，由销售团队进行人工跟进。
 
 **对应业务：**
 - 城市家庭光伏客户开发（业务1）
@@ -133,11 +194,21 @@ PV_OS_MASTER/
 - CRM 客户跟踪（业务8）
 
 典型子目录结构：
-- `leads/` — 潜在客户线索
+- `leads/` — 销售线索（hot/、qualified/、raw/）
 - `customers/` — 正式客户档案
 - `follow_ups/` — 跟进记录
 - `funnel/` — 销售漏斗分析
 - `tags/` — 客户标签体系（场景类型、房产类型等）
+
+**LEADS 与 CRM 的边界：**
+
+| 05_CUSTOMER_LEADS | 05_CUSTOMER_CRM |
+|-------------------|----------------|
+| ✅ AI 发现 | ✅ 销售跟进 |
+| ✅ 评论线索 | ✅ 联系记录 |
+| ✅ 评分结果 | ✅ 商机管理 |
+| ✅ 培育池 | ✅ 成交客户 |
+| ❌ 不涉及销售动作 | ❌ 不涉及 AI 评分 |
 
 ---
 
@@ -150,84 +221,80 @@ PV_OS_MASTER/
 - 小商业场景项目案例（业务3）
 
 典型子目录结构：
-- `residential/` — 家庭光伏案例（按房型细分）
-- `commercial/` — 小商业光伏案例
-- `designs/` — 方案设计文档
-- `photos/` — 实景照片
+- `residential/` — 住宅类案例（别墅、叠拼、洋房、阳光房、露台）
+- `commercial/` — 小商业案例（民宿、酒店、棋牌室、茶楼等）
+- `designs/` — 方案设计图、系统图
+- `photos/` — 实拍照片素材
 
 ---
 
 ### 07_FINANCE —— 财务
 
-存放报价模板、成本核算、合同模板、收入支出记录等财务相关文件。
+存放报价模板、成本核算、合同管理、财务报表等财务相关数据。
 
-**对应业务：** 全业务线的财务支撑
+**对应业务：** 报价管理、合同管理
 
 典型子目录结构：
-- `quotes/` — 报价模板
-- `costs/` — 成本核算
-- `contracts/` — 合同模板
+- `quotes/` — 报价模板与历史报价
+- `costs/` — 成本数据
+- `contracts/` — 合同模板与签约记录
 - `reports/` — 财务报表
 
 ---
 
 ### 08_SYSTEM —— 系统技术实现
 
-存放 PV_OS 的**技术代码、系统配置、工具脚本、数据库 schema**。
+存放系统级的技术代码、配置文件、数据库 Schema、运维脚本等。
 
-**对应业务：** 全业务线的技术支撑
+**规则：** 不与具体业务绑定的通用技术代码放此处。与特定业务绑定的代码归入对应业务目录。
 
 典型子目录结构：
-- `src/` — 源代码
-- `config/` — 系统配置文件（API Key、数据库连接等）
-- `scripts/` — 运维与工具脚本
-- `db/` — 数据库 schema 与迁移文件
-- `tests/` — 测试代码
-
-**规则：** 凡是可执行的代码、系统级配置、数据库定义，归入 08_SYSTEM。
+- `src/` — 核心源代码
+- `config/` — 系统级配制
+- `scripts/` — 运维 / 部署 / 数据维护脚本
+- `db/` — 数据库 Schema 与迁移
 
 ---
 
 ### 09_AI_OPERATION —— AI 运营
 
-存放与**日常 AI 运营**直接相关的策略、竞品分析、运营数据、采集任务配置。
+存放运营策略、竞品分析报告、平台采集配置等 AI 运营相关资产。
 
 **对应业务：**
 - 竞品账号自动发现（业务4）
-- 抖音、小红书、快手、视频号数据采集（业务5）
-- 评论区潜在客户识别（业务6）
-- 爆款视频拆解（业务9）
+- 平台采集策略（业务5）
+- 运营分析与洞察
 
 典型子目录结构：
-- `competitors/` — 竞品账号库与分析报告
-- `platforms/` — 各平台采集规则与配置
-- `comments/` — 评论区数据与分析结果
-- `insights/` — 运营洞察与策略建议
-- `tasks/` — 定时采集任务定义
+- `competitors/` — 竞品分析报告
+- `platforms/` — 各平台采集配置与策略
+- `comments/` — 评论区运营分析
+- `insights/` — AI 运营洞察与周报
 
 ---
 
 ### 10_AI_AUTOMATION_ENGINE —— AI 自动化引擎
 
-存放**自动化工作流定义、Agent 编排、触发规则、调度逻辑**。这是 PV_OS 的"大脑中枢"。
+存放 AI 工作流定义、任务编排、事件触发、定时调度等自动化相关代码。
 
 **对应业务：**
-- 自动化 Agent 运行（业务11）
-- 跨模块工作流编排
+- 自动化 Agent 编排（业务11）
+- 评论 → 客户 → CRM 全链路自动化
 
 典型子目录结构：
-- `workflows/` — 工作流定义（如"采集→识别→评分→推送CRM"）
-- `orchestrator/` — Agent 编排器
-- `triggers/` — 触发规则（定时、事件驱动）
-- `scheduler/` — 调度配置
+- `workflows/` — AI 工作流定义（YAML/JSON）
+- `orchestrator/` — 任务编排与执行
+- `triggers/` — 事件触发规则
+- `scheduler/` — 定时调度
+- `tests/` — 自动化测试
 
 ---
 
 ### 11_AI_PRODUCTIZATION —— AI 产品化与商业包装
 
-存放将 AI 能力**包装为可售卖产品**的方案：产品定义、定价策略、营销材料、客户交付物。
+存放产品定义、定价策略、营销材料、交付物等商业相关资产。
 
-**对应业务：** 全业务线的商业化输出
+**对应业务：** 产品化、营销推广
 
 典型子目录结构：
 - `products/` — 产品定义与规格
@@ -239,35 +306,28 @@ PV_OS_MASTER/
 
 ### 12_AI_RUNTIME —— AI 运行时
 
-存放 AI 模型**运行所需的环境**：模型权重、推理代码、依赖管理、运行时日志。
-
-**对应业务：**
-- 自动化 Agent 运行（业务11）
-- 所有 AI 推理任务
+存放 AI 模型权重、推理代码、依赖配置、运行日志等运行时环境。
 
 典型子目录结构：
-- `models/` — 模型权重文件
+- `models/` — AI 模型权重文件
 - `inference/` — 推理服务代码
-- `deps/` — 依赖与虚拟环境
-- `logs/` — 运行时日志
+- `deps/` — 依赖清单（requirements.txt 等）
+- `logs/` — 运行日志
 
 ---
 
 ### 99_BACKUP —— 备份归档
 
-存放不再活跃但需要保留的**历史版本、归档项目、废弃方案**。
-
-- `archives/` — 归档文件
-- `deprecated/` — 废弃但保留备查的方案
+存放废弃文档、历史版本、环境迁移备份等归档内容。不参与日常开发。
 
 ---
 
-## 四、五类资产的存放矩阵
+## 四、五类资产存放矩阵
 
-| 资产类型 | 主目录 | 说明 |
-|----------|--------|------|
-| **数据** | `02_DATA/` | 原始数据、处理后数据、数据集、数据字典 |
-| **文档** | `00_SYSTEM/`、`01_PROJECT_MANAGEMENT/`、`06_CASE_LIBRARY/` | 系统文档 → 00；项目文档 → 01；案例文档 → 06 |
+| 资产类型 | 存放位置 | 边界说明 |
+|---------|---------|---------|
+| **文档** | `00_SYSTEM/`、`01_PROJECT_MANAGEMENT/`、`04_CONTENT/`、`09_AI_OPERATION/` | 项目管理文档 → 01；规则文档 → 00；内容资产 → 04；运营分析 → 09 |
+| **数据** | `02_DATA/` | 所有数据类文件（raw/processed/datasets/exports/） |
 | **代码** | `08_SYSTEM/`、`10_AI_AUTOMATION_ENGINE/`、`12_AI_RUNTIME/` | 系统代码 → 08；工作流代码 → 10；推理代码 → 12 |
 | **配置** | `08_SYSTEM/config/`、`09_AI_OPERATION/platforms/` | 系统配置 → 08；平台采集配置 → 09 |
 | **模型** | `12_AI_RUNTIME/models/` | 所有 AI 模型权重文件 |
@@ -278,6 +338,7 @@ PV_OS_MASTER/
 > - 是"定义"还是"执行"？定义 → 03_AI_AGENT；执行 → 10_AI_AUTOMATION_ENGINE
 > - 是"策略"还是"结果"？策略 → 09_AI_OPERATION；结果 → 02_DATA
 > - 是"内容"还是"客户"？内容 → 04_CONTENT；客户 → 05_CUSTOMER_CRM
+> - 是"AI 发现"还是"销售跟进"？发现 → 05_CUSTOMER_LEADS；跟进 → 05_CUSTOMER_CRM
 
 ---
 
@@ -298,7 +359,7 @@ PV_OS 的 AI Agent 在读取项目文件时，遵循以下优先级：
 | 任务类型 | 优先读取目录 |
 |----------|-------------|
 | 数据采集相关 | `02_DATA/`、`09_AI_OPERATION/` |
-| 客户识别/评分 | `03_AI_AGENT/`、`05_CUSTOMER_CRM/` |
+| 客户识别/评分 | `03_AI_AGENT/`、`05_CUSTOMER_LEADS/`、`05_CUSTOMER_CRM/` |
 | 内容生产/拆解 | `04_CONTENT/`、`09_AI_OPERATION/` |
 | Agent 开发/编排 | `03_AI_AGENT/`、`10_AI_AUTOMATION_ENGINE/` |
 | 系统开发/运维 | `08_SYSTEM/`、`12_AI_RUNTIME/` |
@@ -333,7 +394,10 @@ PV_OS 的 AI Agent 在读取项目文件时，遵循以下优先级：
 ├─ 是内容资产（脚本/素材/拆解）？
 │  └─ → 04_CONTENT/
 │
-├─ 是客户/线索/跟进记录？
+├─ 是 AI 客户线索/评分结果/培育池？
+│  └─ → 05_CUSTOMER_LEADS/
+│
+├─ 是销售客户/跟进记录/商机？
 │  └─ → 05_CUSTOMER_CRM/
 │
 ├─ 是项目案例/方案设计？
@@ -361,27 +425,19 @@ PV_OS 的 AI Agent 在读取项目文件时，遵循以下优先级：
    └─ → 99_BACKUP/
 ```
 
-### 模糊边界处理
-
-如果文件同时符合多个目录特征（如既包含数据又包含代码），按以下优先级决定：
-
-1. **代码优先**：含可执行逻辑 → 归入代码类目录（08/10/12）
-2. **产出优先**：运营分析报告（综合数据+文档）→ 归入业务目录（09/04/05）而非 02_DATA
-3. **新增子目录**：如果某业务线文件量膨胀，可在对应一级目录下新建有意义的子目录，并在本文件更新
-
 ---
 
 ## 七、业务能力映射总表
 
 | 序号 | 核心业务 | 主要目录 | 辅助目录 |
 |------|---------|---------|---------|
-| 1 | 城市家庭光伏客户开发 | `05_CUSTOMER_CRM/` | `06_CASE_LIBRARY/` |
-| 2 | 别墅/叠拼/洋房/露台/阳光房需求 | `05_CUSTOMER_CRM/` | `06_CASE_LIBRARY/`、`11_AI_PRODUCTIZATION/` |
-| 3 | 小商业场景（民宿/酒店/棋牌室等） | `05_CUSTOMER_CRM/` | `06_CASE_LIBRARY/`、`11_AI_PRODUCTIZATION/` |
+| 1 | 城市家庭光伏客户开发 | `05_CUSTOMER_CRM/` | `05_CUSTOMER_LEADS/`、`06_CASE_LIBRARY/` |
+| 2 | 别墅/叠拼/洋房/露台/阳光房需求 | `05_CUSTOMER_CRM/` | `05_CUSTOMER_LEADS/`、`06_CASE_LIBRARY/`、`11_AI_PRODUCTIZATION/` |
+| 3 | 小商业场景（民宿/酒店/棋牌室等） | `05_CUSTOMER_CRM/` | `05_CUSTOMER_LEADS/`、`06_CASE_LIBRARY/`、`11_AI_PRODUCTIZATION/` |
 | 4 | 竞品账号自动发现 | `09_AI_OPERATION/` | `10_AI_AUTOMATION_ENGINE/` |
 | 5 | 抖音/小红书/快手/视频号数据采集 | `02_DATA/` | `09_AI_OPERATION/` |
-| 6 | 评论区潜在客户识别 | `03_AI_AGENT/` | `09_AI_OPERATION/`、`10_AI_AUTOMATION_ENGINE/` |
-| 7 | AI 客户评分 | `03_AI_AGENT/` | `05_CUSTOMER_CRM/` |
+| 6 | 评论区潜在客户识别 | `03_AI_AGENT/` | `05_CUSTOMER_LEADS/`、`09_AI_OPERATION/`、`10_AI_AUTOMATION_ENGINE/` |
+| 7 | AI 客户评分 | `03_AI_AGENT/` | `05_CUSTOMER_LEADS/`、`05_CUSTOMER_CRM/` |
 | 8 | CRM 客户跟踪 | `05_CUSTOMER_CRM/` | `10_AI_AUTOMATION_ENGINE/` |
 | 9 | 爆款视频拆解 | `04_CONTENT/` | `09_AI_OPERATION/` |
 | 10 | AI 内容生产 | `04_CONTENT/` | `03_AI_AGENT/`、`10_AI_AUTOMATION_ENGINE/` |
@@ -394,3 +450,4 @@ PV_OS 的 AI Agent 在读取项目文件时，遵循以下优先级：
 | 版本 | 日期 | 变更说明 |
 |------|------|---------|
 | V1.0 | 2026-07-11 | 初始版本，定义全部 14 个一级目录、五类资产存放矩阵、AI 读取规则、新增文件决策流程 |
+| V1.1 | 2026-07-14 | 新增 05_CUSTOMER_LEADS（AI 客户发现层），区分 AI 发现与销售管理两层架构，更新目录树（14→15 个一级目录）、决策流程、业务能力映射表、读取规则 |

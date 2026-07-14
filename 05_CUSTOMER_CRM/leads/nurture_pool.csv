@@ -1,0 +1,4 @@
+lead_id,platform,comment_text,city,district,province,customer_type,housing_type,demand_signals,lead_score,lead_grade,contact_intent,urgency,status,created_at
+PV_LEAD_77DE6643,xiaohongshu,光伏发电靠谱吗？想了解一下,贵州贵阳,,贵州贵阳,家庭用户,普通住宅,,49,B,False,low,new,2026-07-13 13:42:21
+PV_LEAD_E656442C,xiaohongshu,光伏发电靠谱吗？想了解一下,贵州贵阳,,贵州贵阳,家庭用户,普通住宅,,49,B,False,low,new,2026-07-13 13:42:46
+PV_LEAD_D28442F0,douyin,光伏了解一下,北京,,北京,家庭用户,普通住宅,,45,B,False,low,new,2026-07-13 13:42:46
