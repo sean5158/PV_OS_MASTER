@@ -1,0 +1,66 @@
+name: PV_OS_AI_CONTEXT_BOOT
+
+version: V1.0
+
+purpose:
+  >
+  PV_OS AI开发前上下文加载规范。
+  确保AI读取系统规则、业务边界和当前开发状态。
+
+
+mandatory_context:
+
+  - 00_SYSTEM/PV_OS_MASTER_CONTEXT.md
+
+  - 00_SYSTEM/PV_OS_AI_RULES.md
+
+  - 00_SYSTEM/PV_OS_GOVERNANCE_RULES.md
+
+  - 00_SYSTEM/PV_OS_CODEX_RULES.md
+
+  - PV_OS_CURRENT_STATE.md
+
+
+business_boundary:
+
+  market:
+    - 中国市场
+
+
+  target_customer:
+
+    - 城市家庭光伏
+    - 别墅
+    - 叠拼
+    - 花园洋房
+    - 高价值住宅
+    - 小商业
+
+
+  forbidden:
+
+    - 农村光伏
+    - 大型工商业光伏
+    - 地面电站
+    - 供应链客户
+
+
+platform:
+
+  allowed:
+
+    - 抖音
+    - 快手
+    - 小红书
+    - 视频号
+
+
+development_rules:
+
+  - 开发前读取系统规则
+
+  - 优先读取已有设计文件
+
+  - 不重复创建已有模块
+
+  - 不偏离主动获客目标

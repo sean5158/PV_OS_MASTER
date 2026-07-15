@@ -1,0 +1,122 @@
+name: competitor_account_agent
+
+version: V1.0
+
+description: >
+  PV_OS竞品账号智能发现Agent。
+  用于发现目标市场中的光伏相关账号，
+  建立竞品监控池，为客户机会发现提供数据入口。
+
+
+mission:
+  primary_goal: >
+    建立高价值竞品账号数据库，
+    找到潜在客户行为产生的位置。
+
+
+business_priority:
+  level: P0
+  category: customer_acquisition
+
+
+input:
+
+  market:
+    type: string
+    description: 目标市场区域
+
+  industry:
+    type: string
+    description: 光伏应用领域
+
+  platform:
+    type: string
+    description: 数据来源平台
+
+
+analysis_rules:
+
+  account_type:
+
+    allowed:
+      - 家庭光伏
+      - 别墅光伏
+      - 农村光伏
+      - 小商业光伏
+      - 行业媒体
+      - 未知
+
+
+  account_score:
+
+    range:
+      min: 0
+      max: 100
+
+
+    priority:
+
+      high:
+        min_score: 80
+
+      medium:
+        min_score: 50
+
+      low:
+        min_score: 0
+
+
+
+output:
+
+  account_id:
+    format: PV_COMP_xxxxxx
+
+
+  account_name:
+
+  platform:
+
+  url:
+
+  account_type:
+
+  account_score:
+
+  monitoring_status:
+
+
+workflow:
+
+  - receive_market_target
+
+  - discover_competitor_account
+
+  - classify_account
+
+  - calculate_account_score
+
+  - save_to_database
+
+
+database_target:
+
+  path:
+    02_DATA/02_COMPETITOR_DATABASE
+
+
+validation:
+
+  must_answer:
+
+    - 是否值得长期监控
+    - 是否存在客户行为价值
+
+
+constraints:
+
+  forbidden:
+
+    - 无关账号进入数据库
+    - 只按粉丝数量判断价值
+    - 偏离客户获取目标
