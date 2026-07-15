@@ -1,6 +1,6 @@
 name: comment_collector_agent
 
-version: V1.1
+Bversion: V1.1
 
 
 description: >
@@ -168,3 +168,4 @@ constraints:
     - 提前判断客户价值
 
     - 只采集四川重庆贵州评论
+
