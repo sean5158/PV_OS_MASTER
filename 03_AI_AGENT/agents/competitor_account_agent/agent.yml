@@ -1,122 +1,377 @@
 name: competitor_account_agent
 
-version: V1.0
+version: V1.1
+
 
 description: >
   PV_OS竞品账号智能发现Agent。
-  用于发现目标市场中的光伏相关账号，
-  建立竞品监控池，为客户机会发现提供数据入口。
+  用于从全国范围发现光伏相关账号，
+  判断账号是否具有四川、重庆、贵州家庭光伏客户来源价值。
 
 
 mission:
+
   primary_goal: >
-    建立高价值竞品账号数据库，
-    找到潜在客户行为产生的位置。
+    找到能够持续产生目标客户线索的竞品账号，
+    而不是简单统计行业账号数量。
 
 
 business_priority:
+
   level: P0
-  category: customer_acquisition
+
+  category:
+    customer_acquisition
+
 
 
 input:
 
-  market:
-    type: string
-    description: 目标市场区域
-
-  industry:
-    type: string
-    description: 光伏应用领域
-
   platform:
     type: string
-    description: 数据来源平台
+
+  keyword:
+    type: string
+
+  account_data:
+    type: object
+
+
+
+account_category:
+
+
+  type_A:
+
+    name: 个人光伏内容博主
+
+    priority: highest
+
+
+    judgment:
+
+      - 昵称包含光伏相关关键词
+      - 视频内容持续出现家庭光伏
+      - 发电玻璃相关内容
+      - 别墅光伏案例
+      - 评论区出现安装咨询
+
+
+
+  type_B:
+
+    name: 光伏企业/品牌/安装公司
+
+    priority: high
+
+
+    judgment:
+
+      - 光伏厂家
+      - 安装公司
+      - 品牌账号
+      - 工程案例展示
+      - 客户咨询互动
+
+
+
+  type_C:
+
+    name: 行业媒体/科普账号
+
+    priority: medium
+
+
+    judgment:
+
+      - 光伏知识
+      - 行业新闻
+      - 技术分享
+
+
+
+  type_D:
+
+    name: 无价值账号
+
+    priority: low
+
 
 
 analysis_rules:
 
-  account_type:
 
-    allowed:
-      - 家庭光伏
-      - 别墅光伏
-      - 农村光伏
-      - 小商业光伏
-      - 行业媒体
-      - 未知
+  content_analysis:
+
+    check:
+
+      - 账号名称
+      - 简介
+      - 标签
+      - 视频内容
+      - 评论内容
 
 
-  account_score:
+
+  customer_source_value:
+
+
+    core_rule: >
+
+      不以粉丝数量判断价值。
+
+      判断该账号是否能够产生：
+
+      四川、
+      重庆、
+      贵州
+
+      家庭光伏客户。
+
+
+    factors:
+
+
+      regional_comment:
+
+        weight: 40
+
+
+      customer_intent:
+
+        weight: 30
+
+
+      residential_scene:
+
+        weight: 20
+
+
+      account_activity:
+
+        weight: 10
+
+
+
+region_focus:
+
+
+  target:
+
+
+    provinces:
+
+      - 四川
+
+      - 重庆
+
+      - 贵州
+
+
+
+  detection:
+
+
+    accept:
+
+      - 四川
+      - 川
+      - 成都
+      - 绵阳
+      - 德阳
+      - 宜宾
+      - 南充
+      - 重庆
+      - 渝
+      - 贵阳
+      - 遵义
+
+
+
+scoring_model:
+
+
+  account_authority_score:
 
     range:
+
       min: 0
+
+      max: 100
+
+
+    factors:
+
+      - 粉丝规模
+
+      - 行业专业度
+
+      - 内容质量
+
+      - 更新频率
+
+      - 品牌影响力
+
+
+
+  customer_source_score:
+
+    range:
+
+      min: 0
+
       max: 100
 
 
     priority:
 
-      high:
-        min_score: 80
+      primary: true
 
-      medium:
-        min_score: 50
 
-      low:
-        min_score: 0
+    target_region:
+
+      - 四川
+
+      - 重庆
+
+      - 贵州
+
+
+    high_value_signals:
+
+
+      region:
+
+        - 四川
+
+        - 成都
+
+        - 绵阳
+
+        - 重庆
+
+        - 贵阳
+
+        - 贵州
+
+
+      intent:
+
+        - 想安装
+
+        - 准备安装
+
+        - 多少钱
+
+        - 报价
+
+        - 联系
+
+        - 可以安装吗
+
+        - 有没有安装公司
+
+
+
+priority_rule:
+
+
+  final_value:
+
+
+    customer_source_score: 80%
+
+
+    account_authority_score: 20%
 
 
 
 output:
 
-  account_id:
-    format: PV_COMP_xxxxxx
+  database:
+
+    path:
+
+      - 02_DATA/02_COMPETITOR_DATABASE/competitor_accounts.csv
 
 
-  account_name:
+    fields:
 
-  platform:
-
-  url:
-
-  account_type:
-
-  account_score:
-
-  monitoring_status:
-
-
-workflow:
-
-  - receive_market_target
-
-  - discover_competitor_account
-
-  - classify_account
-
-  - calculate_account_score
-
-  - save_to_database
+      - account_id
+      - platform
+      - account_name
+      - account_url
+      - account_type
+      - video_id
+      - video_title
+      - video_url
+      - video_topic
+      - publish_time
+      - followers
+      - account_authority_score
+      - customer_source_score
+      - target_region
+      - customer_signal_count
+      - monitor_level
+      - last_scan_time
+      - status
 
 
 database_target:
 
+
   path:
-    02_DATA/02_COMPETITOR_DATABASE
+
+    - 02_DATA/02_COMPETITOR_DATABASE
+
+
+
+workflow:
+
+
+  - discover_account
+
+  - analyze_content
+
+  - classify_account
+
+  - analyze_customer_source_value
+
+  - score_account
+
+  - save_database
+
 
 
 validation:
 
+
   must_answer:
 
-    - 是否值得长期监控
+
+    - 是否与光伏行业相关
+
     - 是否存在客户行为价值
+
+    - 是否值得长期监控
+
 
 
 constraints:
 
+
   forbidden:
 
-    - 无关账号进入数据库
+
     - 只按粉丝数量判断价值
-    - 偏离客户获取目标
+
+    - 只保存大账号
+
+    - 忽略评论区客户信号
+
+    - 收录无关账号
+
+
+status:
+
+  development: true

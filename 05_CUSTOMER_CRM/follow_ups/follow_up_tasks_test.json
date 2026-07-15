@@ -1,0 +1,41 @@
+[
+  {
+    "task_id": "PV_TASK_000001",
+    "lead_id": "PV_LEAD_000001",
+    "customer_region": "四川",
+    "customer_city": "成都",
+    "property_type": "别墅",
+    "score": 95,
+    "lead_grade": "S",
+    "priority": "最高",
+    "action": "24小时内电话或私信联系",
+    "source_comment": "我是成都的，家里别墅想装光伏，大概多少钱？",
+    "source_account": "全国大型光伏公司",
+    "status": "待跟进"
+  },
+  {
+    "task_id": "PV_TASK_000002",
+    "lead_id": "PV_LEAD_000002",
+    "customer_region": "四川",
+    "customer_city": "绵阳",
+    "property_type": "住宅",
+    "score": 85,
+    "lead_grade": "S",
+    "priority": "最高",
+    "action": "24小时内联系确认安装条件",
+    "source_comment": "绵阳有没有安装的？多少钱一套？",
+    "source_account": "光伏安装公司",
+    "status": "待跟进"
+  },
+  {
+    "task_id": "PV_TASK_000003",
+    "lead_id": "PV_LEAD_000003",
+    "customer_region": "重庆",
+    "score": 65,
+    "lead_grade": "A",
+    "priority": "重点培育",
+    "action": "进入跟进池，持续观察",
+    "source_comment": "重庆农村自建房可以安装吗？",
+    "status": "培育中"
+  }
+]

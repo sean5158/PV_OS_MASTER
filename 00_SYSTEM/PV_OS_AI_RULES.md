@@ -370,6 +370,38 @@ PV_OS **仅聚焦光伏（太阳能）行业**，所有 AI 行为必须在以下
 4. 确认任务类型，定位目标目录
 ```
 
+
+---
+
+# 竞品发现与评论获客规则
+
+必须读取：
+
+02_DATA/02_COMPETITOR_DATABASE/COMPETITOR_ACCOUNT_MODEL.md
+
+02_DATA/02_COMPETITOR_DATABASE/COMPETITOR_DISCOVERY_ALGORITHM.md
+
+02_DATA/02_COMPETITOR_DATABASE/COMPETITOR_SCORE_RULE.md
+
+02_DATA/02_COMPETITOR_DATABASE/COMMENT_ANALYZER_RULE.md
+
+说明：
+
+以上文件定义：
+
+- 全国光伏竞品账号发现规则
+- 个人光伏博主识别规则
+- 企业/品牌竞品识别规则
+- 评论区潜在客户识别规则
+- 四川、重庆、贵州区域客户筛选规则
+
+执行时必须遵守。
+
+
+
+
+
+
 ### 文件归属速查
 
 | 我要放一个... | 去这里 |

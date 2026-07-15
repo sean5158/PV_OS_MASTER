@@ -1,0 +1,26 @@
+[
+  {
+    "lead_id": "PV_LEAD_000001",
+    "comment_id": "test001",
+    "region": "四川",
+    "city": "成都",
+    "property_type": "别墅",
+    "intent_level": 3,
+    "score": 95,
+    "lead_grade": "S",
+    "source_account": "全国大型光伏公司",
+    "follow_status": "待联系"
+  },
+  {
+    "lead_id": "PV_LEAD_000002",
+    "comment_id": "test002",
+    "region": "四川",
+    "city": "绵阳",
+    "property_type": "住宅",
+    "intent_level": 3,
+    "score": 85,
+    "lead_grade": "S",
+    "source_account": "光伏安装公司",
+    "follow_status": "待联系"
+  }
+]

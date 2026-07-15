@@ -1,530 +1,396 @@
 name: lead_scoring_agent
 
-version: 2.1
+version: V1.1
+
 
 description: >
-  PV_OS 光伏行业客户价值评分 Agent。
-  基于 CUSTOMER_SCORE_MODEL.md 五维评分模型，
-  消费 comment_analyzer 输出，输出 lead_score / lead_grade / crm_target / follow_up_priority。
+  PV_OS销售线索评分Agent。
+  对评论分析后的潜在客户进行价值排序，
+  输出销售优先级。
 
-purpose:
-  - 客户线索五维评分
-  - S/A/B/C 等级判定
-  - CRM 路由分发
-  - 跟进优先级排序
 
-# ============================================
-# 输入：comment_analyzer 输出字段
-# 含评分五维所需全部字段
-# ============================================
+mission:
+
+  primary_goal: >
+
+    找出四川、重庆、贵州地区
+    高转化概率家庭光伏客户。
+
+
+business_priority:
+
+  level: P0
+
+  category:
+    sales_conversion
+
+
 
 input:
 
-  upstream: comment_analyzer
-  intermediate: 05_CUSTOMER_LEADS
-
-  fields:
-
-    # ---- demand 维度 ----
-    - name: source_content
-      type: string
-      required: true
-      description: 原始评论内容（需求关键词匹配 + 真实性分析）
-
-    - name: intent_level
-      type: integer
-      required: true
-      enum: [0, 1, 2, 3]
-      description: 上游初步意向（0 无需求 / 1 潜在兴趣 / 2 咨询意向 / 3 明确购买）
-
-    # ---- region 维度 ----
-    - name: province
-      type: string
-      required: true
-      description: 省份
-
-    - name: city
-      type: string
-      required: true
-      description: 城市
-
-    - name: district
-      type: string
-      required: false
-      description: 区县
-
-    # ---- housing 维度 ----
-    - name: housing_type
-      type: string
-      required: true
-      enum:
-        - 别墅
-        - 叠拼
-        - 阳光房
-        - 大平层
-        - 花园洋房
-        - 普通住宅
-        - 农村自建房
-        - 商业建筑
-        - 未知
-      description: 房屋类型
-
-    - name: customer_type
-      type: string
-      required: true
-      enum:
-        - 家庭用户
-        - 别墅用户
-        - 小商业用户
-        - 同行业用户
-        - 无关用户
-        - 未知
-      description: 客户类型（housing_type 未知时的辅助判断）
-
-    # ---- time 维度 ----
-    - name: comment_time
-      type: datetime
-      required: true
-      format: ISO 8601
-      description: 评论发布时间
-
-    # ---- authenticity 维度 ----
-    (复用 source_content 做自然度分析)
-
-    # ---- CRM 追溯 ----
-    - name: source_platform
-      type: string
-      required: true
-      enum: [douyin, xiaohongshu, kuaishou, wechat_video]
-      description: 来源平台
-
-    - name: tags
-      type: array
-      required: false
-      description: comment_analyzer 生成的客户标签
-
-# ============================================
-# 评分逻辑：五维评分模型
-# 全部来自 CUSTOMER_SCORE_MODEL.md §2
-# ============================================
-
-scoring:
-
-  # -------------------------------
-  # 维度 1：安装需求强度 0-40
-  # 来源：CUSTOMER_SCORE_MODEL.md §2.2
-  # -------------------------------
-  demand_intensity:
-    max_score: 40
-    source: source_content
-
-    levels:
-      - score: 40
-        label: 极强需求
-        criteria: 明确想安装 / 要求报价 / 要求上门测量 / 询问施工时间
-        keywords:
-          - 想装、要装、准备装、打算装、考虑装、做光伏、搞一套、装一套、安一套
-          - 报价、价格、多少钱、费用、怎么收费、贵不贵、预算、成本
-          - 上门、测量、勘测、来看看、看一下、能不能来、来我家
-          - 施工时间、工期、多久装好、几天能装、什么时候装、马上装
-
-      - score: 30
-        label: 强需求
-        criteria: 询问多少钱 / 询问安装流程
-        keywords:
-          - 多少钱、价格、收费、费用
-          - 安装流程、怎么装、步骤、流程、手续、并网流程
-
-      - score: 20
-        label: 明确兴趣
-        criteria: 询问效果 / 询问发电量
-        keywords:
-          - 效果怎么样、好用吗、靠谱吗、真的省电吗、有没有用
-          - 发电多少、一天几度、够用吗、能带多少电器、多少千瓦
-
-      - score: 10
-        label: 普通了解
-        criteria: 一般性了解光伏，无明确购买信号
-
-      - score: 0
-        label: 无需求
-        criteria: 评论与光伏安装无关
-
-    rule_overlap: take_max
-    rule_description: 同时命中多个分数段关键词时取最高分
-
-    negative_correction:
-      - type: 免费安装期待
-        keywords: [免费装, 免费安装, 不花钱装, 国家免费装]
-        correction: -25
-
-      - type: 政策等待
-        keywords: [政府什么时候装, 国家项目, 政策下来了吗]
-        correction: -20
-
-      - type: 补贴咨询
-        keywords: [有没有补贴, 补贴多少钱, 政府补助]
-        correction: -15
-
-      - type: 观望型
-        keywords: [了解一下, 看看政策, 以后再说]
-        correction: -10
-
-      rule: 仅免费/政策信号无购买行为 → 需求强度最高 10 分
-
-  # -------------------------------
-  # 维度 2：区域匹配价值 0-20
-  # 来源：CUSTOMER_SCORE_MODEL.md §2.3
-  # -------------------------------
-  region_value:
-    max_score: 20
-    source: [province, city, district]
-
-    levels:
-      - score: 20
-        region: 成都核心区
-        match: { province: 四川, city: 成都, district: [锦江区, 青羊区, 金牛区, 武侯区, 成华区, 成都高新区, 天府新区] }
-
-      - score: 18
-        region: 成都外围区
-        match: { province: 四川, city: 成都, district: [龙泉驿区, 青白江区, 新都区, 温江区, 双流区, 郫都区] }
-
-      - score: 18
-        region: 重庆核心区
-        match: { province: 重庆, district: [渝中区, 江北区, 南岸区, 沙坪坝区, 九龙坡区, 大渡口区, 渝北区, 巴南区] }
-
-      - score: 16
-        region: 成都郊县
-        match: { province: 四川, city: 成都, district: [新津区, 简阳市, 都江堰市, 彭州市, 邛崃市, 崇州市, 金堂县, 大邑县, 蒲江县] }
-
-      - score: 15
-        region: 四川主要城市
-        match: { province: 四川, city: [绵阳, 德阳, 宜宾, 南充, 泸州] }
-
-      - score: 15
-        region: 重庆外围区
-        match: { province: 重庆, city: [北碚, 涪陵, 长寿, 江津, 合川, 永川, 南川, 綦江, 大足, 铜梁, 璧山, 荣昌, 万州] }
-
-      - score: 15
-        region: 贵阳核心区
-        match: { province: 贵州, city: 贵阳, district: [南明区, 云岩区, 花溪区, 乌当区, 白云区, 观山湖区] }
-
-      - score: 13
-        region: 四川其余城市
-        match: { province: 四川, city: [达州, 乐山, 眉山, 遂宁, 广安, 内江, 自贡, 广元, 雅安, 巴中, 资阳, 攀枝花] }
-
-      - score: 13
-        region: 贵州重点城市
-        match: { province: 贵州, city: [遵义, 毕节, 安顺] }
-
-      - score: 10
-        region: 贵州其余及省级未知
-        match: 川渝黔省级但无法定位城市
-
-      - score: 0
-        region: 区域未知
-        match: 不在川渝黔范围或完全无法判断
-
-  # -------------------------------
-  # 维度 3：房屋场景价值 0-20
-  # 来源：CUSTOMER_SCORE_MODEL.md §2.4
-  # -------------------------------
-  housing_value:
-    max_score: 20
-    source: [housing_type, source_content]
-
-    levels:
-      - score: 20
-        scene: 别墅
-        match: { housing_type: 别墅 }
-        keywords: [别墅, 独栋, 联排]
-
-      - score: 18
-        scene: 叠拼/阳光房/露台
-        match: { housing_type: [叠拼, 阳光房] }
-        keywords: [叠拼, 叠墅, 阳光房, 玻璃房, 露台, 大露台]
-
-      - score: 15
-        scene: 大平层/花园洋房
-        match: { housing_type: [大平层, 花园洋房] }
-        keywords: [大平层, 花园洋房, 洋房]
-
-      - score: 12
-        scene: 自建房（农村）
-        match: { housing_type: 农村自建房 }
-        keywords: [自建房, 农村房, 宅基地, 老家房子, 农村屋顶]
-
-      - score: 10
-        scene: 普通住宅顶楼
-        keywords: [顶楼, 屋顶, 楼顶]
-
-      - score: 5
-        scene: 普通住宅
-        match: { housing_type: 普通住宅 }
-        keywords: [普通住宅, 住宅, 小区]
-
-      - score: 0
-        scene: 未知
-        description: 无法从 housing_type 或 source_content 推断
-
-    rule: 多场景匹配取最高分；housing_type 未知时从 source_content 关键词推断
-
-  # -------------------------------
-  # 维度 4：用户真实性 0-10
-  # 来源：CUSTOMER_SCORE_MODEL.md §1.2 + §2.5
-  # -------------------------------
-  authenticity:
-    max_score: 10
-    source: source_content
-
-    levels:
-      - score_range: [8, 10]
-        label: 真实用户
-        criteria: 评论内容自然，有个人表达和具体场景描述
-
-      - score_range: [4, 7]
-        label: 可疑用户
-        criteria: 内容模板化、营销口吻、缺乏个人化表达
-
-      - score_range: [0, 3]
-        label: 非真实用户
-        criteria: 机器人/水军/同行试探，纯广告或纯专业术语无购买意愿
-
-  # -------------------------------
-  # 维度 5：时间价值 0-10
-  # 来源：COMMENT_TIME_AND_MATCH_RULE.md §2.1
-  # -------------------------------
-  time_value:
-    max_score: 10
-    source: comment_time
-
-    levels:
-      - score: 10
-        range: ≤ 1 小时
-        description: 高活跃用户，正在关注相关内容
-
-      - score: 9
-        range: 1 小时 - 24 小时
-        description: 强实时兴趣
-
-      - score: 7
-        range: 1 天 - 7 天
-        description: 近期兴趣用户
-
-      - score: 5
-        range: 7 天 - 30 天
-        description: 历史潜在客户
-
-      - score: 3
-        range: 30 天 - 90 天
-        description: 长周期需求用户
-
-      - score: 1
-        range: 90 天 - 180 天
-        description: 低优先级分析用户
-
-      - score: 0
-        range: > 180 天
-        description: 仅数据分析
-
-# ============================================
-# 农村客户修正
-# 来源：CUSTOMER_SCORE_MODEL.md §8.2
-# ============================================
-
-rural_correction:
-  principle: 农村客户不因标签自动降低价值
-
-  rules:
-    - condition: 农村自建房 + 明确安装需求
-      action: 正常评分，进入客户池
-
-    - condition: 农村自建房 + 主动询价
-      action: 需求分增加，提升优先级
-
-    - condition: 农村经营场景（民宿/农家乐/养殖/合作社）
-      action: 按商业客户处理，不因农村标签降权
-
-    - condition: 农村 + 仅免费政策信号
-      action: 降低需求评分（参见 negative_correction）
-
-# ============================================
-# 总分计算与等级判定
-# 来源：CUSTOMER_SCORE_MODEL.md §2.1
-# ============================================
-
-calculation:
-  formula: >
-    lead_score = demand_score + region_score + housing_score
-               + authenticity_score + time_score
-
-grade:
+
+  source:
+
+    - comment_analyzer_output
+
+
+
+analysis:
+
+
+  scoring_model:
+
+
+    total_score:
+
+      max:100
+
+
+
+    factors:
+
+
+      # 购买需求强度
+
+      intent_score:
+
+
+        weight:40
+
+
+        rules:
+
+
+          S:
+
+            keywords:
+
+              - 想安装
+
+              - 准备装
+
+              - 多少钱
+
+              - 报价
+
+              - 联系
+
+
+          A:
+
+            keywords:
+
+              - 效果怎么样
+
+              - 收益多少
+
+              - 靠谱吗
+
+
+          B:
+
+            keywords:
+
+              - 了解一下
+
+              - 什么原理
+
+
+
+      # 区域价值
+
+      region_score:
+
+
+        weight:20
+
+
+        rules:
+
+
+          city_confirmed:
+
+            score:20
+
+
+            examples:
+
+              - 成都
+
+              - 绵阳
+
+              - 重庆
+
+              - 贵阳
+
+
+
+          province_confirmed:
+
+            score:15
+
+
+
+          vague_region:
+
+            score:10
+
+
+
+      # 房屋价值
+
+      property_score:
+
+
+        weight:20
+
+
+        rules:
+
+
+          high:
+
+
+            score:20
+
+
+            keywords:
+
+
+              - 别墅
+
+              - 独栋
+
+              - 叠拼
+
+              - 阳光房
+
+
+
+          medium:
+
+
+            score:15
+
+
+            keywords:
+
+
+              - 自建房
+
+              - 屋顶
+
+              - 住宅
+
+
+
+          low:
+
+
+            score:5
+
+
+
+      # 评论真实性
+
+      authenticity_score:
+
+
+        weight:10
+
+
+        rules:
+
+
+          high:
+
+
+            keywords:
+
+
+              - 我家
+
+              - 我这里
+
+              - 我的房子
+
+              - 我准备
+
+
+
+          medium:
+
+
+            keywords:
+
+
+              - 有没有
+
+              - 能不能
+
+
+
+      # 时间价值
+
+      time_score:
+
+
+        weight:10
+
+
+        rules:
+
+
+          recent:
+
+            days:7
+
+            score:10
+
+
+          normal:
+
+            days:30
+
+            score:8
+
+
+
+lead_grade:
+
+
   S:
-    min: 80
-    max: 100
-    label: 高价值客户
-    action: 立即人工跟进
+
+
+    score:
+
+      min:80
+
+
+    action:
+
+      - 立即销售跟进
+
+
 
   A:
-    min: 60
-    max: 79
-    label: 优质客户
-    action: 重点培育
+
+
+    score:
+
+      min:60
+
+
+    action:
+
+      - 重点培育
+
+
 
   B:
-    min: 35
-    max: 59
-    label: 潜在客户
-    action: 长期运营
+
+
+    score:
+
+      min:35
+
+
+    action:
+
+      - 长期运营
+
+
 
   C:
-    min: 0
-    max: 34
-    label: 低优先级
-    action: 分析保存
 
-# ============================================
-# 输出定义
-# ============================================
+
+    score:
+
+      max:35
+
+
+    action:
+
+      - 数据保存
+
+
+
+business_rules:
+
+
+  priority_order:
+
+
+    1:
+
+      成都/重庆/贵阳等城市
+
+
+    2:
+
+      别墅/叠拼/阳光房
+
+
+    3:
+
+      明确安装咨询
+
+
+    4:
+
+      普通住宅
+
+
+    5:
+
+      泛行业讨论
+
+
 
 output:
 
-  # ---- 核心输出字段 ----
-  lead_score:
-    type: integer
-    range: [0, 100]
-    description: 五维评分总分
-    formula: demand_score + region_score + housing_score + authenticity_score + time_score
 
-  lead_grade:
-    type: enum
-    values: [S, A, B, C]
-    description: >
-      S: lead_score >= 80（高价值，立即跟进）
-      A: 60 <= lead_score <= 79（优质，重点培育）
-      B: 35 <= lead_score <= 59（潜在，长期运营）
-      C: lead_score < 35（低优先级，分析保存）
+  path:
 
-  crm_target:
-    type: string
-    description: CRM 入库目标目录
-    mapping:
-      S: 05_CUSTOMER_CRM/leads/hot/
-      A: 05_CUSTOMER_CRM/leads/qualified/
-      B: 05_CUSTOMER_CRM/leads/qualified/
-      C: 05_CUSTOMER_CRM/leads/raw/
 
-  follow_up_priority:
-    type: enum
-    values: [high, medium, low]
-    description: 销售跟进优先级
-    rules:
-      - condition: demand_score >= 30 AND time_score >= 7
-        value: high
-      - condition: demand_score >= 20 OR time_score >= 5
-        value: medium
-      - else: low
+    - 05_CUSTOMER_CRM/leads/
 
-  # ---- 分维度得分（透传） ----
-  demand_score:
-    type: integer
-    description: 安装需求强度（0-40）
 
-  region_score:
-    type: integer
-    description: 区域匹配价值（0-20）
 
-  housing_score:
-    type: integer
-    description: 房屋场景价值（0-20）
+  fields:
 
-  authenticity_score:
-    type: integer
-    description: 用户真实性（0-10）
 
-  time_score:
-    type: integer
-    description: 时间价值（0-10）
+    - lead_id
 
-  # ---- CRM 基础字段（透传） ----
-  platform:
-    type: string
-    description: 来源平台
+    - customer_region
 
-  comment_text:
-    type: string
-    description: 原始评论
+    - customer_city
 
-  province:
-    type: string
+    - intent_level
 
-  city:
-    type: string
+    - property_type
 
-  district:
-    type: string
+    - score
 
-  customer_type:
-    type: string
+    - lead_grade
 
-  housing_type:
-    type: string
+    - follow_action
 
-  demand_signals:
-    type: array
-    description: 识别到的需求信号列表
 
-  tags:
-    type: array
-    description: 客户标签
 
-  status:
-    type: string
-    default: new
-    description: CRM 初始状态
+constraints:
 
-# ============================================
-# 状态与依赖
-# ============================================
 
-status: development
+  forbidden:
 
-depends_on:
-  - file: 02_DATA/06_SCORE_MODEL/CUSTOMER_SCORE_MODEL.md
-    usage: 五维评分模型、等级阈值、负向修正、农村客户规则
 
-  - file: 02_DATA/04_COMMENT_DATABASE/COMMENT_ANALYZER_RULE.md
-    usage: 上游输入定义
+    - 粉丝数量影响客户评分
 
-  - file: 02_DATA/04_COMMENT_DATABASE/COMMENT_TIME_AND_MATCH_RULE.md
-    usage: 时间价值分档、区域模糊识别
+    - 农村客户全部删除
 
-  - file: 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
-    usage: 区域分值映射
+    - 没有城市信息直接判无效
 
-  - file: 05_CUSTOMER_CRM/leads/lead_schema.md
-    usage: CRM 输出字段标准
 
-  - file: 05_CUSTOMER_LEADS/FIELD_MAPPING_RULE.md
-    usage: 字段映射
+status:
 
-# ============================================
-# 版本记录
-# ============================================
-
-version_history:
-  - version: V1.0
-    date: 2026-07-12
-    note: 创建（简化版：意图分 + 类型分 + 关键词分）
-
-  - version: V2.0
-    date: 2026-07-13
-    note: 替换为 CUSTOMER_SCORE_MODEL 完整五维评分
-
-  - version: V2.1
-    date: 2026-07-13
-    note: >
-      输出字段精确对齐：
-      total_score → lead_score
-      urgency → follow_up_priority
-      新增 crm_target 显式输出字段
+  development: true

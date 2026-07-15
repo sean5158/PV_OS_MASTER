@@ -1,47 +1,465 @@
 name: comment_analyzer
 
-version: 1.0
+version: V1.1
+
 
 description: >
-  PV_OS光伏行业评论客户识别Agent
+  PV_OS评论客户识别Agent。
+  从全国光伏相关评论中，
+  识别四川、重庆、贵州家庭光伏潜在客户。
 
-purpose:
-  - 评论内容分析
-  - 客户需求识别
-  - 购买意向评分
-  - 客户标签生成
+
+mission:
+
+  primary_goal: >
+
+    从公开评论中发现真实购买信号。
+
+    不删除模糊区域客户。
+
+    重点发现川渝黔家庭光伏需求。
+
+
+business_priority:
+
+  level: P0
+
+  category:
+    customer_acquisition
+
+
 
 input:
+
+
   source:
+
     - 02_DATA/raw/
 
+
   schema:
-    - 02_DATA/data_dict/comment_schema.md
+
+    - 02_DATA/04_COMMENT_DATABASE/COMMENT_LEAD_SCHEMA.md
+
 
 
 analysis:
+
+
   customer_type:
-    - 家庭用户
-    - 别墅用户
-    - 小商业用户
-    - 同行业用户
-    - 无关用户
+
+
+    categories:
+
+
+      - 家庭住宅用户
+
+      - 别墅用户
+
+      - 自建房用户
+
+      - 小商业用户
+
+      - 同行业人员
+
+      - 无关用户
+
+
 
   intent_level:
-    0: 无需求
-    1: 潜在兴趣
-    2: 咨询意向
-    3: 明确购买意向
 
-  score:
-    range: 0-100
+
+    0:
+
+      description:
+        无需求
+
+
+    1:
+
+      description:
+        潜在兴趣
+
+
+    2:
+
+      description:
+        咨询阶段
+
+
+    3:
+
+      description:
+        明确购买意向
+
+
+
+region_analysis:
+
+
+  target_region:
+
+
+    provinces:
+
+
+      - 四川
+
+      - 重庆
+
+      - 贵州
+
+
+
+  recognition_rule:
+
+
+    principle: >
+
+      用户不会填写完整行政地址。
+
+      AI必须支持自然语言中的区域表达。
+
+
+
+  province_keywords:
+
+
+    四川:
+
+
+      - 四川
+      - 川
+
+
+    重庆:
+
+
+      - 重庆
+      - 渝
+
+
+    贵州:
+
+
+      - 贵州
+      - 黔
+
+
+
+  city_keywords:
+
+
+    四川:
+
+
+      - 成都
+      - 绵阳
+      - 德阳
+      - 宜宾
+      - 南充
+      - 泸州
+      - 乐山
+      - 达州
+
+
+    重庆:
+
+
+      - 重庆
+      - 万州
+      - 涪陵
+      - 江津
+      - 合川
+
+
+    贵州:
+
+
+      - 贵阳
+      - 遵义
+      - 毕节
+      - 安顺
+
+
+
+  region_level:
+
+
+    A:
+
+      description:
+        城市明确
+
+
+    B:
+
+      description:
+        省份明确
+
+
+    C:
+
+      description:
+        模糊区域
+
+
+
+  examples:
+
+
+    - text:
+        "四川的可以装吗"
+
+      result:
+        四川
+
+
+    - text:
+        "成都多少钱"
+
+      result:
+        成都
+
+
+    - text:
+        "绵阳有没有安装"
+
+      result:
+        绵阳
+
+
+
+need_analysis:
+
+
+  high_value_keywords:
+
+
+    - 想装
+
+    - 准备安装
+
+    - 多少钱
+
+    - 报价
+
+    - 联系
+
+    - 哪里安装
+
+    - 可以装吗
+
+
+
+  medium_keywords:
+
+
+    - 收益怎么样
+
+    - 效果如何
+
+    - 靠谱吗
+
+    - 使用几年
+
+
+
+  low_keywords:
+
+
+    - 原理
+
+    - 政策
+
+    - 补贴
+
+
+
+property_analysis:
+
+
+  high:
+
+
+    - 别墅
+
+    - 独栋
+
+    - 叠拼
+
+    - 阳光房
+
+    - 花园洋房
+
+
+
+  medium:
+
+
+    - 自建房
+
+    - 屋顶
+
+    - 楼顶
+
+    - 住宅
+
+
+
+  low:
+
+
+    - 单纯政策讨论
+
+
+
+score:
+
+
+  total: 100
+
+
+  factors:
+
+
+    need_strength:
+
+      weight:40
+
+
+    region_value:
+
+      weight:20
+
+
+    property_value:
+
+      weight:20
+
+
+    comment_time:
+
+      weight:10
+
+
+    authenticity:
+
+      weight:10
+
+
+
+lead_level:
+
+
+  S:
+
+
+    score:
+
+      min:80
+
+
+    condition:
+
+
+      - 四川重庆贵州
+
+      - 有安装意向
+
+
+
+  A:
+
+
+    score:
+
+      min:60
+
+
+
+  B:
+
+
+    score:
+
+      min:35
+
+
+
+  C:
+
+
+    score:
+
+      max:35
+
 
 
 output:
 
+
   path:
+
+
     - 05_CUSTOMER_CRM/leads/
 
 
+
+  fields:
+
+
+    - customer_region
+
+    - customer_city
+
+    - need_level
+
+    - property_type
+
+    - source_account
+
+    - source_video
+
+    - original_comment
+
+    - score
+
+    - lead_grade
+
+
+
+workflow:
+
+
+  - read_comment
+
+  - detect_region
+
+  - detect_need
+
+  - detect_property
+
+  - calculate_score
+
+  - generate_lead
+
+
+
+constraints:
+
+
+  forbidden:
+
+
+    - 删除无城市评论
+
+    - 只接受完整地址
+
+    - 忽略四川重庆贵州模糊表达
+
+
+
 status:
+
   development: true

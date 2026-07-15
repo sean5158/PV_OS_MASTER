@@ -1,0 +1,31 @@
+[
+  {
+    "lead_id": "PV_LEAD_000003",
+    "comment_id": "test003",
+    "region": "重庆",
+    "property_type": "待判断",
+    "intent_level": 2,
+    "score": 65,
+    "lead_grade": "A",
+    "follow_status": "培育"
+  },
+  {
+    "lead_id": "PV_LEAD_000004",
+    "comment_id": "test004",
+    "region": "贵州",
+    "city": "贵阳",
+    "intent_level": 2,
+    "score": 70,
+    "lead_grade": "A",
+    "follow_status": "培育"
+  },
+  {
+    "lead_id": "PV_LEAD_000006",
+    "comment_id": "test006",
+    "region": "四川",
+    "intent_level": 2,
+    "score": 75,
+    "lead_grade": "A",
+    "follow_status": "培育"
+  }
+]

@@ -1,0 +1,2 @@
+account_id,platform,account_name,account_url,account_type,video_id,video_title,video_url,video_topic,publish_time,followers,account_authority_score,customer_source_score,target_region,customer_signal_count,monitor_level,last_scan_time,status
+PV_COMP_000002,douyin,李哥装修日记,https://douyin.com/example2,个人IP账号,video002,成都别墅屋顶光伏改造,https://douyin.com/video002,别墅家庭光伏,2026-07-15,5000,40,90,四川成都,1,S,2026-07-15,active

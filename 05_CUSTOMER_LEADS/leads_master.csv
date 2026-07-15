@@ -1,1 +1,6 @@
-lead_id,platform,source_video_id,source_author,comment_id,comment_text,comment_time,comment_level,total_score,lead_grade,province,city,district,region_confidence,housing_type,demand_signals,contact_intent,urgency,status,notes
+lead_id,comment_id,platform,source_account,province,city,property_type,need_type,intent_level,score,lead_grade,original_comment,created_time
+PV_LEAD_000001,test001,douyin,某光伏博主,四川,成都,别墅,家庭光伏安装,3,95,S,"我是成都的，家里别墅想装光伏，大概多少钱？",2026-07-15
+PV_LEAD_000002,test002,douyin,光伏安装公司,四川,绵阳,住宅未知,家庭光伏安装,2,80,A,"绵阳有没有安装的？多少钱一套？",2026-07-15
+PV_LEAD_000003,test004,douyin,光伏玻璃介绍,贵州,,未知,发电玻璃安装,2,75,A,"贵州有没有做发电玻璃安装的？",2026-07-15
+PV_LEAD_000004,test003,xiaohongshu,家庭光伏分享,重庆,,自建房,家庭光伏安装,2,65,B,"重庆农村自建房可以安装吗？",2026-07-15
+PV_LEAD_000005,test006,douyin,光伏博主,四川,,未知,家庭光伏咨询,1,60,B,"四川的能装吗？",2026-07-15

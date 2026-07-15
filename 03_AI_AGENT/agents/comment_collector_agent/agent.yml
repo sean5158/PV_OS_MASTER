@@ -1,95 +1,129 @@
 name: comment_collector_agent
 
-version: V1.0
+version: V1.1
+
 
 description: >
   PV_OS评论采集Agent。
-  用于从已监控竞品账号中获取用户评论数据，
-  建立真实用户行为数据库，
-  为客户意图分析提供原始数据。
+  从全国光伏相关竞品账号、
+  光伏内容账号评论区采集用户行为数据，
+  为区域客户识别和销售线索发现提供原始数据。
 
 
 mission:
+
   primary_goal: >
-    获取真实用户需求信号，
-    而不是简单收集评论数量。
+    建立全国光伏用户评论资产库，
+    从评论行为中发现四川、重庆、贵州家庭光伏潜在客户。
 
 
 business_priority:
+
   level: P0
+
   category: customer_acquisition
+
 
 
 input:
 
   competitor_account:
+
     type: object
-    description: 已审核竞品账号信息
+
+    description:
+      已审核竞品账号信息
 
 
   platform:
+
     type: string
-    description: 评论来源平台
+
+    description:
+      数据来源平台
 
 
   time_range:
+
     type: string
-    description: 数据采集时间范围
+
+    description:
+      评论采集时间范围
 
 
 
 collection_rules:
 
+
+  geography:
+
+    strategy:
+
+      - 全国采集
+
+      - 后续AI区域筛选
+
+    target_regions:
+
+      - 四川
+
+      - 重庆
+
+      - 贵州
+
+
+
   source_type:
+
 
     allowed:
 
+
       - 抖音评论
+
+      - 快手评论
+
       - 小红书评论
-      - YouTube评论
-      - 微信公众号评论
+
+      - 视频号评论
+
       - 其他公开评论
+
 
 
   collect_fields:
 
+
     - comment_id
+
     - content
-    - source_account
-    - platform
-    - timestamp
+
     - user_name
+
+    - user_id
+
+    - source_account
+
+    - source_video
+
+    - platform
+
+    - timestamp
+
+    - like_count
+
     - url
-
-
-
-output:
-
-  comment_id:
-    format: PV_COMMENT_xxxxxx
-
-
-  content:
-
-  source_account:
-
-  platform:
-
-  timestamp:
-
-
-database_target:
-
-  path:
-    02_DATA/04_COMMENT_DATABASE
 
 
 
 workflow:
 
+
   - receive_competitor_account
 
   - collect_public_comments
+
+  - preserve_original_comment
 
   - clean_comment_data
 
@@ -99,20 +133,38 @@ workflow:
 
 
 
+database_target:
+
+
+  path:
+
+    02_DATA/04_COMMENT_DATABASE
+
+
+
 validation:
+
 
   must_answer:
 
-    - 评论来源是否明确
-    - 是否属于目标行业
-    - 是否可以进入分析流程
 
+    - 评论来源是否明确
+
+    - 是否属于光伏相关内容
+
+    - 是否保存原始用户表达
 
 
 constraints:
 
+
   forbidden:
 
-    - 采集无关行业评论
-    - 修改原始评论内容
-    - 直接判断客户价值
+
+    - 修改用户原始评论
+
+    - 删除模糊地域表达
+
+    - 提前判断客户价值
+
+    - 只采集四川重庆贵州评论

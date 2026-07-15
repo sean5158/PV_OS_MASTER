@@ -1,0 +1,68 @@
+[
+  {
+    "comment_id": "test001",
+    "customer_region": "四川",
+    "customer_city": "成都",
+    "customer_type": "别墅用户",
+    "intent_level": 3,
+    "need_type": "安装咨询",
+    "property_type": "别墅",
+    "score": 95,
+    "lead_grade": "S"
+  },
+  {
+    "comment_id": "test002",
+    "customer_region": "四川",
+    "customer_city": "绵阳",
+    "customer_type": "家庭住宅用户",
+    "intent_level": 3,
+    "need_type": "安装咨询",
+    "property_type": "住宅",
+    "score": 85,
+    "lead_grade": "S"
+  },
+  {
+    "comment_id": "test003",
+    "customer_region": "重庆",
+    "customer_city": "",
+    "customer_type": "家庭住宅用户",
+    "intent_level": 2,
+    "need_type": "安装咨询",
+    "property_type": "待判断",
+    "score": 65,
+    "lead_grade": "A"
+  },
+  {
+    "comment_id": "test004",
+    "customer_region": "贵州",
+    "customer_city": "贵阳",
+    "customer_type": "家庭住宅用户",
+    "intent_level": 2,
+    "need_type": "发电玻璃咨询",
+    "property_type": "待判断",
+    "score": 70,
+    "lead_grade": "A"
+  },
+  {
+    "comment_id": "test005",
+    "customer_region": "",
+    "customer_city": "",
+    "customer_type": "无关用户",
+    "intent_level": 0,
+    "need_type": "知识了解",
+    "property_type": "",
+    "score": 20,
+    "lead_grade": "C"
+  },
+  {
+    "comment_id": "test006",
+    "customer_region": "四川",
+    "customer_city": "",
+    "customer_type": "家庭住宅用户",
+    "intent_level": 2,
+    "need_type": "安装咨询",
+    "property_type": "住宅",
+    "score": 75,
+    "lead_grade": "A"
+  }
+]

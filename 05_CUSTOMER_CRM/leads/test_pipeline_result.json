@@ -1,0 +1,38 @@
+[
+  {
+    "lead_id": "PV_LEAD_000001",
+    "source_comment_id": "test001",
+    "customer_region": "四川",
+    "customer_city": "成都",
+    "intent_level": 3,
+    "property_type": "别墅",
+    "need_level": "S",
+    "score": 95,
+    "lead_grade": "S",
+    "follow_action": "立即销售跟进"
+  },
+  {
+    "lead_id": "PV_LEAD_000002",
+    "source_comment_id": "test002",
+    "customer_region": "四川",
+    "customer_city": "绵阳",
+    "intent_level": 3,
+    "property_type": "住宅",
+    "need_level": "S",
+    "score": 85,
+    "lead_grade": "S",
+    "follow_action": "立即销售跟进"
+  },
+  {
+    "lead_id": "PV_LEAD_000003",
+    "source_comment_id": "test005",
+    "customer_region": "",
+    "customer_city": "",
+    "intent_level": 0,
+    "property_type": "",
+    "need_level": "C",
+    "score": 25,
+    "lead_grade": "C",
+    "follow_action": "保存资产"
+  }
+]
