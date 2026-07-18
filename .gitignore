@@ -20,3 +20,10 @@ __pycache__/
 
 # node
 node_modules/
+# PV_OS Backup System
+
+snapshots/
+
+backup/history/
+
+backup/latest/
