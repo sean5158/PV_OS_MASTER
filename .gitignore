@@ -27,3 +27,7 @@ snapshots/
 backup/history/
 
 backup/latest/
+
+# generated AI context
+00_SYSTEM/PV_OS_AI_CONTEXT.md
+PV_OS_AI_CONTEXT_REPORT.md
