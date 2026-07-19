@@ -20,10 +20,17 @@ def match_customer_region(comment: dict) -> dict:
         "province": "",
         "city": "",
         "district": "",
+
         "source": [],
+
         "confidence": "LOW",
+
         "region_score": 5,
+
         "match_type": "",
+
+        "ip_region": "",
+        "comment_region": "",
     }
 
 
@@ -31,12 +38,15 @@ def match_customer_region(comment: dict) -> dict:
 
     if ip_location:
         region["source"].append("ip_location")
+        region["ip_region"] = ip_location
 
-
+   
     # 评论来源
 
     if content:
         region["source"].append("comment_text")
+        region["comment_region"] = content   
+ 
 
 
     # 城市匹配（V1）
@@ -64,6 +74,7 @@ def match_customer_region(comment: dict) -> dict:
             region["city"] = city
             region["province"] = province
             region["match_type"] = "comment_confirmed"
+            region["region_score"] = 20
             break
 
 
