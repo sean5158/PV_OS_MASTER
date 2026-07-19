@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from region_engine import match_customer_region as region_matcher
+from region_engine import match_region as region_matcher
 
 # ---------------------------------------------------------------------------
 # helpers
@@ -150,11 +150,11 @@ def analyze_comment(ctx: dict[str, Any]) -> dict[str, Any]:
 
     # --- customer type ---
     customer_type = "家庭用户"
-    if any(kw in content for kw in ["别墅", "独栋"]):
+    if any(kw in content for kw in ["别墅", "独栋", "叠拼", "联排", "花园洋房", "阳光房", "露台", "跃层", "大平层"]):
         customer_type = "别墅用户"
     elif any(kw in content for kw in ["农村", "自建房", "老家"]):
         customer_type = "家庭用户"
-    elif any(kw in content for kw in ["厂", "公司", "商铺", "商业"]):
+    elif any(kw in content for kw in ["民宿", "酒店", "餐厅", "茶楼", "美容院", "工作室", "棋牌室", "饭店", "旅馆", "厂", "公司", "商铺", "商业", "店"]):
         customer_type = "小商业用户"
     elif any(kw in content for kw in ["同行", "代理", "经销商"]):
         customer_type = "同行用户"
@@ -163,9 +163,11 @@ def analyze_comment(ctx: dict[str, Any]) -> dict[str, Any]:
     housing_type = "普通住宅"
     if any(kw in content for kw in ["别墅", "独栋"]):
         housing_type = "别墅"
+    elif any(kw in content for kw in ["叠拼", "联排", "花园洋房", "阳光房", "露台", "跃层", "大平层"]):
+        housing_type = "高价值住宅"
     elif any(kw in content for kw in ["农村", "自建房", "老家"]):
         housing_type = "农村自建房"
-    elif any(kw in content for kw in ["厂", "公司", "商铺"]):
+    elif any(kw in content for kw in ["民宿", "酒店", "餐厅", "茶楼", "美容院", "工作室", "厂", "公司", "商铺", "店"]):
         housing_type = "商业建筑"
 
     # --- demand signals ---
@@ -202,13 +204,19 @@ def analyze_comment(ctx: dict[str, Any]) -> dict[str, Any]:
 
 def match_customer_region(ctx: dict[str, Any]) -> dict[str, Any]:
     """
-    Step: customer region detection
+    Step: customer region detection.
+
+    Calls region_engine.match_region() with comment content + ip_location,
+    stores structured result in ctx["region"] for downstream scoring.
     """
-
     comment = ctx.get("comment", {})
+    content = comment.get("content", "")
+    ip_location = comment.get("ip_location", "")
 
-    ctx["region"] = region_matcher(comment)
+    result = region_matcher(content, ip_location)
 
+    ctx["region"] = result
+    ctx["region_analysis"] = result  # alias for analysis consumers
     return ctx
 
 # ---------------------------------------------------------------------------
@@ -241,6 +249,8 @@ def score_customer(ctx: dict[str, Any]) -> dict[str, Any]:
     # housing_score (0-20)
     housing_score = 10  # default family
     if housing_type == "别墅" or customer_type == "别墅用户":
+        housing_score = 20
+    elif housing_type == "高价值住宅":
         housing_score = 20
     elif customer_type == "小商业用户":
         housing_score = 18

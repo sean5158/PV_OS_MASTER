@@ -1,24 +1,28 @@
 
+
 # PV_OS_AI_CONTEXT
+
 
 更新时间:
 
-2026-07-15 17:55:12
+2026-07-19 11:08:53
 
 
-## 项目
+
+# 项目
 
 PV_OS_MASTER
 
 
-## 定位
 
-光伏行业 AI 自动化运营系统
+# 当前定位
+
+光伏行业 AI 自动化运营系统。
 
 
 
+# 当前系统状态
 
-## 项目状态
 
 # PV_OS 项目状态 V1.2
 
@@ -235,7 +239,20 @@ PV_OS_MASTER
 | V1.2 | 2026-07-14 | 架构升级：Phase 1.7 评论潜客发现链路固化、新增 05_CUSTOMER_LEADS 层、两层架构分离、Pipeline 链路就绪记录 |
 
 
-## Agents
+
+
+# PV_OS V2.0战略决策
+
+
+设计文件:
+
+00_SYSTEM/PROJECT_MEMORY/PV_OS_DESIGN_DECISION_LOG_2026-07-15.md
+
+
+
+
+# 当前 Agents
+
 
 03_AI_AGENT/agents/customer_finder_agent/agent.yml
 03_AI_AGENT/agents/comment_collector_agent/agent.yml
@@ -244,33 +261,52 @@ PV_OS_MASTER
 03_AI_AGENT/agents/competitor_account_agent/agent.yml
 
 
-## Automation Workflow
+
+
+# 当前 Workflow
+
 
 10_AI_AUTOMATION_ENGINE/workflows/comment_to_lead_pipeline.yml
 
 
-## AI执行规则
 
-必须读取：
+
+# AI执行规则
+
+
+进入项目必须读取:
+
 
 00_SYSTEM/PV_OS_DIRECTORY_MAP.md
 
+
 00_SYSTEM/PV_OS_AI_RULES.md
+
 
 00_SYSTEM/PV_OS_PROJECT_STATUS.md
 
 
-禁止：
+00_SYSTEM/PROJECT_MEMORY/PV_OS_DESIGN_DECISION_LOG*.md
+
+
+
+
+禁止:
+
 
 - 修改无关文件
+
 - 偏离业务方向
+
 - 编造数据
 
+- 创建未定义目录
 
-## 下一步
+
+
+# 下一步
+
 
 继续当前 Phase 开发。
 
-
-END
 
