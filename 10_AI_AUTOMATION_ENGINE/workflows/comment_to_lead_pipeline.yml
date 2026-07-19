@@ -1,7 +1,9 @@
-version: 1.2
+version: 2.0
+
 
 description:
-  光伏评论自动分析、客户评分、线索分流流程
+  光伏评论自动分析、区域识别、客户评分、线索分流流程
+
 
 
 trigger:
@@ -12,41 +14,60 @@ trigger:
 
 
 
+
 steps:
+
 
 
   # 1. 评论采集
 
+
   - name: collect_comment
+
 
     input:
 
+
       path:
+
 
         - 02_DATA/raw/
 
 
 
+
+
   # 1.5 竞品来源价值分析
+
 
   - name: analyze_source_account
 
+
     agent:
+
 
       - competitor_account_agent
 
 
+
     reference:
+
 
       rules:
 
+
         - 02_DATA/02_COMPETITOR_DATABASE/COMPETITOR_ACCOUNT_MODEL.md
+
         - 02_DATA/02_COMPETITOR_DATABASE/COMPETITOR_SCORE_RULE.md
+
+
 
 
     output:
 
+
       fields:
+
 
         - account_category
 
@@ -56,9 +77,14 @@ steps:
 
 
 
+
+
+
   # 2. 评论资产保存
 
+
   - name: save_comment_asset
+
 
 
     output:
@@ -70,15 +96,20 @@ steps:
         - 05_CUSTOMER_LEADS/comment_asset_library.csv
 
 
+
     rule:
 
 
       keep_history: true
 
 
+
       note:
 
-        全量保存评论，不因时间淘汰
+
+        全量保存评论资产，不因时间淘汰
+
+
 
 
 
@@ -86,7 +117,9 @@ steps:
   # 3. 时间价值判断
 
 
+
   - name: evaluate_comment_time
+
 
 
     rule:
@@ -98,10 +131,12 @@ steps:
         days: 7
 
 
+
       recent_comments:
 
 
         sales_priority: true
+
 
 
       historical_comments:
@@ -112,10 +147,13 @@ steps:
 
 
 
-  # 3.5 客户区域识别
 
 
-  - name: analyze_customer_region
+  # 4. 区域匹配
+
+
+  - name: match_customer_region
+
 
 
     agent:
@@ -125,46 +163,48 @@ steps:
 
 
 
-    rule:
+    reference:
 
 
-      target_region:
+      rules:
 
 
-        - 四川
+        - 00_SYSTEM/PV_OS_CUSTOMER_SCOPE_RULES.md
 
-        - 重庆
+        - 02_DATA/03_REGION_LIBRARY/REGION_MASTER.md
 
-        - 贵州
-
-
-
-      recognition:
-
-
-        allow:
-
-
-          - 省级名称
-
-          - 城市名称
-
-          - 简称
+        - 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
 
 
 
-      examples:
 
 
-        - 四川的
+    recognition:
 
-        - 成都可以装吗
 
-        - 绵阳有没有安装
+      mode:
 
-        - 重庆多少钱
 
-        - 贵州有没有安装
+        - fuzzy_match
+
+        - natural_language
+
+        - administrative_hierarchy
+
+
+
+      principle: >
+
+
+        全国评论均可进入分析。
+
+        AI根据区域知识库识别四川、重庆、贵州
+
+        省、市、区县及自然语言表达。
+
+        不因用户区域表达不完整而删除。
+
+
 
 
 
@@ -178,22 +218,30 @@ steps:
 
         - city
 
-        - region_level
+        - district
+
+        - region_priority
+
+        - region_score
 
 
 
 
 
-  # 4. AI评论分析
+
+  # 5. AI评论分析
+
 
 
   - name: analyze_comment
+
 
 
     agent:
 
 
       - comment_analyzer
+
 
 
 
@@ -211,16 +259,20 @@ steps:
 
 
 
-  # 5. 客户评分
+
+  # 6. 客户评分
+
 
 
   - name: score_customer
+
 
 
     agent:
 
 
       - lead_scoring_agent
+
 
 
 
@@ -232,12 +284,14 @@ steps:
 
         - 02_DATA/06_SCORE_MODEL/CUSTOMER_SCORE_MODEL.md
 
+        - 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
 
 
 
 
 
-  # 6. 客户分流
+
+  # 7. 客户分流
 
 
 
@@ -245,11 +299,14 @@ steps:
 
 
 
+
     condition:
 
 
 
+
       S_or_A:
+
 
 
         output:
@@ -262,8 +319,8 @@ steps:
 
 
 
-
       B:
+
 
 
         output:
@@ -276,8 +333,8 @@ steps:
 
 
 
-
       C:
+
 
 
         output:
@@ -292,11 +349,14 @@ steps:
 
 
 
-  # 7. CRM同步
+
+
+  # 8. CRM同步
 
 
 
   - name: create_crm_lead
+
 
 
 
@@ -336,11 +396,14 @@ steps:
 
 
 
-  # 8. 跟进任务生成
+
+
+  # 9. 跟进任务生成
 
 
 
   - name: generate_follow_up
+
 
 
 
@@ -357,8 +420,8 @@ steps:
 
 
 
-    output:
 
+    output:
 
 
       path:
@@ -380,45 +443,53 @@ status:
 
 
 
-version_history:
 
+version_history:
 
 
   - version: V1.0
 
-
     date: 2026-07-12
 
-
     note:
-
 
       创建评论到客户线索自动流程
 
 
 
-
   - version: V1.1
-
 
     date: 2026-07-12
 
-
     note:
 
-
-      增加评论资产库、7天销售窗口、S/A/B/C客户分流、区域农村规则引用
-
+      增加评论资产库、
+      7天销售窗口、
+      S/A/B/C客户分流、
+      区域规则引用
 
 
 
   - version: V1.2
 
-
     date: 2026-07-15
-
 
     note:
 
+      增加竞品来源价值分析、
+      川渝黔区域识别、
+      评论获客链路优化
 
-      增加竞品来源价值分析、川渝黔区域识别、评论获客链路优化
+
+
+  - version: V2.0
+
+    date: 2026-07-19
+
+    note:
+
+      升级区域智能识别能力。
+
+      接入四川、重庆、贵州三级区域知识库。
+
+      支持省、市、区县和模糊自然语言匹配。

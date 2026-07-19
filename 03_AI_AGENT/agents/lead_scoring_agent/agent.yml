@@ -1,12 +1,14 @@
 name: lead_scoring_agent
 
-version: V1.1
+version: V2.0
 
 
 description: >
   PV_OS销售线索评分Agent。
-  对评论分析后的潜在客户进行价值排序，
-  输出销售优先级。
+  根据客户需求、区域价值、房屋价值、
+  评论真实性和时间价值，
+  对潜在客户进行优先级排序。
+
 
 
 mission:
@@ -16,13 +18,17 @@ mission:
     找出四川、重庆、贵州地区
     高转化概率家庭光伏客户。
 
+    优先识别成都及重点城市高价值客户。
+
+
 
 business_priority:
 
   level: P0
 
   category:
-    sales_conversion
+
+    - sales_conversion
 
 
 
@@ -35,6 +41,18 @@ input:
 
 
 
+  reference_rules:
+
+
+    - 00_SYSTEM/PV_OS_CUSTOMER_SCOPE_RULES.md
+
+    - 02_DATA/03_REGION_LIBRARY/REGION_MASTER.md
+
+    - 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
+
+
+
+
 analysis:
 
 
@@ -43,11 +61,13 @@ analysis:
 
     total_score:
 
-      max:100
+      max: 100
+
 
 
 
     factors:
+
 
 
       # 购买需求强度
@@ -55,7 +75,7 @@ analysis:
       intent_score:
 
 
-        weight:40
+        weight: 40
 
 
         rules:
@@ -63,7 +83,9 @@ analysis:
 
           S:
 
+
             keywords:
+
 
               - 想安装
 
@@ -76,9 +98,12 @@ analysis:
               - 联系
 
 
+
           A:
 
+
             keywords:
+
 
               - 效果怎么样
 
@@ -87,13 +112,17 @@ analysis:
               - 靠谱吗
 
 
+
           B:
 
+
             keywords:
+
 
               - 了解一下
 
               - 什么原理
+
 
 
 
@@ -102,47 +131,91 @@ analysis:
       region_score:
 
 
-        weight:20
+        weight: 20
 
 
-        rules:
+        reference:
 
 
-          city_confirmed:
+          - 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
 
-            score:20
+
+
+        priority:
+
+
+          P0:
 
 
             examples:
 
+
+              - 成都区县
+
               - 成都
 
-              - 绵阳
 
-              - 重庆
-
-              - 贵阳
+            score:
 
 
+              district_confirmed:20
 
-          province_confirmed:
-
-            score:15
+              city_confirmed:18
 
 
 
-          vague_region:
+          P1:
 
-            score:10
+
+            examples:
+
+
+              - 四川其他城市
+
+              - 重庆重点区域
+
+
+            score:
+
+
+              city_confirmed:16
+
+              region_confirmed:15
+
+
+
+          P2:
+
+
+            examples:
+
+
+              - 贵州重点城市
+
+
+            score:
+
+
+              city_confirmed:15
+
+
+
+          unknown:
+
+
+            score: 10
+
 
 
 
       # 房屋价值
 
+
       property_score:
 
 
-        weight:20
+        weight: 20
+
 
 
         rules:
@@ -151,7 +224,7 @@ analysis:
           high:
 
 
-            score:20
+            score: 20
 
 
             keywords:
@@ -165,12 +238,14 @@ analysis:
 
               - 阳光房
 
+              - 花园洋房
+
 
 
           medium:
 
 
-            score:15
+            score: 15
 
 
             keywords:
@@ -180,6 +255,8 @@ analysis:
 
               - 屋顶
 
+              - 楼顶
+
               - 住宅
 
 
@@ -187,16 +264,19 @@ analysis:
           low:
 
 
-            score:5
+            score: 5
+
 
 
 
       # 评论真实性
 
+
       authenticity_score:
 
 
-        weight:10
+        weight: 10
+
 
 
         rules:
@@ -230,12 +310,15 @@ analysis:
 
 
 
+
       # 时间价值
+
 
       time_score:
 
 
-        weight:10
+        weight: 10
+
 
 
         rules:
@@ -243,20 +326,25 @@ analysis:
 
           recent:
 
-            days:7
 
-            score:10
+            days: 7
+
+            score: 10
+
 
 
           normal:
 
-            days:30
 
-            score:8
+            days: 30
+
+            score: 8
+
 
 
 
 lead_grade:
+
 
 
   S:
@@ -264,10 +352,13 @@ lead_grade:
 
     score:
 
-      min:80
+
+      min: 80
+
 
 
     action:
+
 
       - 立即销售跟进
 
@@ -278,10 +369,13 @@ lead_grade:
 
     score:
 
-      min:60
+
+      min: 60
+
 
 
     action:
+
 
       - 重点培育
 
@@ -292,10 +386,13 @@ lead_grade:
 
     score:
 
+
       min:35
 
 
+
     action:
+
 
       - 长期运营
 
@@ -306,12 +403,16 @@ lead_grade:
 
     score:
 
-      max:35
+
+      max: 35
+
 
 
     action:
 
+
       - 数据保存
+
 
 
 
@@ -323,27 +424,33 @@ business_rules:
 
     1:
 
-      成都/重庆/贵阳等城市
+      成都区县
 
 
     2:
 
-      别墅/叠拼/阳光房
+      成都城市
 
 
     3:
 
-      明确安装咨询
+      四川其他城市
 
 
     4:
 
-      普通住宅
+      重庆重点区域
 
 
     5:
 
-      泛行业讨论
+      贵州重点城市
+
+
+    6:
+
+      其他区域
+
 
 
 
@@ -362,9 +469,13 @@ output:
 
     - lead_id
 
-    - customer_region
+    - province
 
-    - customer_city
+    - city
+
+    - district
+
+    - region_priority
 
     - intent_level
 
@@ -378,6 +489,25 @@ output:
 
 
 
+
+workflow:
+
+
+  - receive_comment_analysis
+
+  - evaluate_region_value
+
+  - evaluate_purchase_intent
+
+  - evaluate_property_value
+
+  - calculate_score
+
+  - generate_lead
+
+
+
+
 constraints:
 
 
@@ -386,9 +516,12 @@ constraints:
 
     - 粉丝数量影响客户评分
 
-    - 农村客户全部删除
+    - 删除目标区域模糊客户
 
-    - 没有城市信息直接判无效
+    - 忽略区县级客户
+
+    - 脱离区域库自行定义市场范围
+
 
 
 status:

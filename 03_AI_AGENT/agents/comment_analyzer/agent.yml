@@ -1,12 +1,14 @@
+
 name: comment_analyzer
 
-version: V1.1
+version: V2.0
 
 
 description: >
   PV_OS评论客户识别Agent。
-  从全国光伏相关评论中，
-  识别四川、重庆、贵州家庭光伏潜在客户。
+  从全国公开光伏市场信号中，
+  根据区域知识库识别四川、重庆、贵州
+  城市家庭光伏、高价值住宅及小商业潜在客户。
 
 
 mission:
@@ -15,9 +17,14 @@ mission:
 
     从公开评论中发现真实购买信号。
 
-    不删除模糊区域客户。
+    使用区域知识库识别用户区域。
 
-    重点发现川渝黔家庭光伏需求。
+    支持用户自然语言表达。
+
+    不因为区域表达不完整而删除潜在客户。
+
+    重点发现四川、重庆、贵州区域家庭光伏需求。
+
 
 
 business_priority:
@@ -25,19 +32,25 @@ business_priority:
   level: P0
 
   category:
-    customer_acquisition
+
+    - customer_acquisition
 
 
 
 input:
-
 
   source:
 
     - 02_DATA/raw/
 
 
-  schema:
+  reference_rules:
+
+    - 00_SYSTEM/PV_OS_CUSTOMER_SCOPE_RULES.md
+
+    - 02_DATA/03_REGION_LIBRARY/REGION_MASTER.md
+
+    - 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
 
     - 02_DATA/04_COMMENT_DATABASE/COMMENT_LEAD_SCHEMA.md
 
@@ -72,29 +85,47 @@ analysis:
     0:
 
       description:
+
         无需求
 
 
     1:
 
       description:
+
         潜在兴趣
 
 
     2:
 
       description:
+
         咨询阶段
 
 
     3:
 
       description:
+
         明确购买意向
 
 
 
+
+
 region_analysis:
+
+
+  reference:
+
+
+    region_library:
+
+
+      - 02_DATA/03_REGION_LIBRARY/REGION_MASTER.md
+
+      - 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
+
 
 
   target_region:
@@ -111,97 +142,99 @@ region_analysis:
 
 
 
-  recognition_rule:
+  recognition:
+
+
+    mode:
+
+
+      - fuzzy_match
+
+      - natural_language
+
+      - administrative_hierarchy
+
 
 
     principle: >
 
       用户不会填写完整行政地址。
 
-      AI必须支持自然语言中的区域表达。
+      AI必须识别省、市、区县以及口语化区域表达。
+
+      只要属于四川、重庆、贵州范围内，
+
+      均进入客户分析流程。
 
 
 
-  province_keywords:
+  region_priority:
 
 
-    四川:
+    P0:
 
-
-      - 四川
-      - 川
-
-
-    重庆:
-
-
-      - 重庆
-      - 渝
-
-
-    贵州:
-
-
-      - 贵州
-      - 黔
-
-
-
-  city_keywords:
-
-
-    四川:
-
-
-      - 成都
-      - 绵阳
-      - 德阳
-      - 宜宾
-      - 南充
-      - 泸州
-      - 乐山
-      - 达州
-
-
-    重庆:
-
-
-      - 重庆
-      - 万州
-      - 涪陵
-      - 江津
-      - 合川
-
-
-    贵州:
-
-
-      - 贵阳
-      - 遵义
-      - 毕节
-      - 安顺
-
-
-
-  region_level:
-
-
-    A:
 
       description:
-        城市明确
+
+        成都核心区域
 
 
-    B:
+      examples:
+
+
+        - 成都
+
+        - 锦江区
+
+        - 武侯区
+
+        - 双流区
+
+        - 郫都区
+
+        - 温江区
+
+
+
+    P1:
+
 
       description:
-        省份明确
+
+        四川其他城市及重庆重点区域
 
 
-    C:
+      examples:
+
+
+        - 绵阳
+
+        - 宜宾
+
+        - 泸州
+
+        - 南充
+
+        - 德阳
+
+        - 重庆
+
+
+
+    P2:
+
 
       description:
-        模糊区域
+
+        贵州重点区域
+
+
+      examples:
+
+
+        - 贵阳
+
+        - 遵义
 
 
 
@@ -209,24 +242,84 @@ region_analysis:
 
 
     - text:
-        "四川的可以装吗"
+
+        四川可以装吗
+
 
       result:
-        四川
+
+
+        province: 四川
+
 
 
     - text:
-        "成都多少钱"
+
+        成都多少钱
+
 
       result:
-        成都
+
+
+        province: 四川
+
+        city: 成都
+
 
 
     - text:
-        "绵阳有没有安装"
+
+        双流有没有安装
+
 
       result:
-        绵阳
+
+
+        province: 四川
+
+        city: 成都
+
+        district: 双流区
+
+
+
+    - text:
+
+        宜宾有没有案例
+
+
+      result:
+
+
+        province: 四川
+
+        city: 宜宾
+       
+
+
+    - text:
+
+        重庆这边可以装吗
+
+
+      result:
+
+
+        province: 重庆
+
+
+
+    - text:
+
+        贵州能不能装
+
+
+      result:
+
+
+        province: 贵州
+
+
 
 
 
@@ -276,41 +369,54 @@ need_analysis:
 
 
 
+
+
 property_analysis:
 
 
   high:
 
 
-    - 别墅
+    keywords:
 
-    - 独栋
 
-    - 叠拼
+      - 别墅
 
-    - 阳光房
+      - 独栋
 
-    - 花园洋房
+      - 叠拼
+
+      - 阳光房
+
+      - 花园洋房
 
 
 
   medium:
 
 
-    - 自建房
+    keywords:
 
-    - 屋顶
 
-    - 楼顶
+      - 自建房
 
-    - 住宅
+      - 屋顶
+
+      - 楼顶
+
+      - 住宅
 
 
 
   low:
 
 
-    - 单纯政策讨论
+    keywords:
+
+
+      - 单纯政策讨论
+
+
 
 
 
@@ -325,27 +431,45 @@ score:
 
     need_strength:
 
-      weight:40
+
+      weight: 40
+
 
 
     region_value:
 
-      weight:20
+
+      weight: 20
+
+
+      reference:
+
+
+        - 02_DATA/03_REGION_LIBRARY/REGION_MATCH_RULE.md
+
 
 
     property_value:
 
-      weight:20
+
+      weight: 20
+
 
 
     comment_time:
 
-      weight:10
+
+      weight: 10
+
 
 
     authenticity:
 
-      weight:10
+
+      weight: 10
+
+
+
 
 
 
@@ -357,15 +481,24 @@ lead_level:
 
     score:
 
-      min:80
+
+      min: 80
 
 
     condition:
 
 
-      - 四川重庆贵州
+      - 区域匹配成功
 
-      - 有安装意向
+      - 有明确安装意向
+
+
+
+    action:
+
+
+      - 立即销售跟进
+
 
 
 
@@ -374,7 +507,15 @@ lead_level:
 
     score:
 
-      min:60
+
+      min: 60
+
+
+    action:
+
+
+      - 重点培育
+
 
 
 
@@ -383,7 +524,15 @@ lead_level:
 
     score:
 
-      min:35
+
+      min: 35
+
+
+    action:
+
+
+      - 长期运营
+
 
 
 
@@ -392,7 +541,16 @@ lead_level:
 
     score:
 
-      max:35
+
+      max: 35
+
+
+    action:
+
+
+      - 数据保存
+
+
 
 
 
@@ -409,9 +567,17 @@ output:
   fields:
 
 
-    - customer_region
+    - province
 
-    - customer_city
+    - city
+
+    - district
+
+    - region_priority
+
+    - region_score
+
+    - customer_type
 
     - need_level
 
@@ -429,12 +595,14 @@ output:
 
 
 
+
+
 workflow:
 
 
   - read_comment
 
-  - detect_region
+  - match_region
 
   - detect_need
 
@@ -446,20 +614,27 @@ workflow:
 
 
 
+
+
 constraints:
 
 
   forbidden:
 
 
-    - 删除无城市评论
+    - 删除目标区域模糊表达客户
 
-    - 只接受完整地址
+    - 只接受完整行政地址
 
-    - 忽略四川重庆贵州模糊表达
+    - 忽略四川重庆贵州下面城市和区县
+
+    - 脱离区域库自行修改市场范围
+
+
 
 
 
 status:
+
 
   development: true
