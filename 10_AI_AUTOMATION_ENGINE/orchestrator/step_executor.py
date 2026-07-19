@@ -15,6 +15,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from region_engine import match_customer_region as region_matcher
+
 # ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
@@ -194,6 +196,20 @@ def analyze_comment(ctx: dict[str, Any]) -> dict[str, Any]:
     }
     return ctx
 
+# ---------------------------------------------------------------------------
+# step: match_customer_region
+# ---------------------------------------------------------------------------
+
+def match_customer_region(ctx: dict[str, Any]) -> dict[str, Any]:
+    """
+    Step: customer region detection
+    """
+
+    comment = ctx.get("comment", {})
+
+    ctx["region"] = region_matcher(comment)
+
+    return ctx
 
 # ---------------------------------------------------------------------------
 # step: score_customer (lead_scoring_agent — rule-based)
@@ -231,16 +247,14 @@ def score_customer(ctx: dict[str, Any]) -> dict[str, Any]:
     elif housing_type == "农村自建房":
         housing_score = 12
 
-    # region_score (0-20) — simplified: use IP location as proxy
-    ip_loc = comment.get("ip_location", "")
-    region_score = 10
-    if any(r in ip_loc for r in ["四川", "成都", "绵阳"]):
-        region_score = 16
-    elif any(r in ip_loc for r in ["重庆"]):
-        region_score = 15
-    elif any(r in ip_loc for r in ["贵州", "贵阳"]):
-        region_score = 14
+    # region_score from match_customer_region
 
+    region = ctx.get("region", {})
+
+    region_score = region.get(
+        "region_score",
+        5
+)
     # time_score (0-10)
     time_score = 10 if is_recent else 5
 
@@ -388,6 +402,7 @@ STEP_REGISTRY = {
     "collect_comment": collect_comment,
     "save_comment_asset": save_comment_asset,
     "evaluate_comment_time": evaluate_comment_time,
+    "match_customer_region": match_customer_region,
     "analyze_comment": analyze_comment,
     "score_customer": score_customer,
     "route_customer": route_customer,
