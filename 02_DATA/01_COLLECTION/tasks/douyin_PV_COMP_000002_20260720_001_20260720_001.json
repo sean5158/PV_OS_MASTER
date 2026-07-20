@@ -1,9 +1,11 @@
 {
   "task_id": "douyin_PV_COMP_000002_20260720_001_20260720_001",
+  "task_type": "collection",
   "platform": "douyin",
   "account_id": "PV_COMP_000002",
   "account_name": "李哥装修日记",
   "account_category": "个人IP账号",
+  "is_first_collection": true,
   "collection_frequency": "6h",
   "priority": "P0",
   "video_filter": {
@@ -21,15 +23,15 @@
     "per_video": 50,
     "time_window_days": 0
   },
-  "status": "pending",
+  "status": "completed",
   "retry_count": 0,
   "max_retries": 3,
   "last_cursor": "dy_mock_PV_COMP_000002_006",
-  "last_collected_count": 0,
-  "total_collected_count": 6,
+  "last_collected_count": 6,
+  "total_collected_count": 12,
   "created_time": "2026-07-20 11:42:12",
-  "updated_time": "2026-07-20 11:42:12",
-  "last_run_time": "",
+  "updated_time": "2026-07-20 18:00:17",
+  "last_run_time": "2026-07-20 18:00:17",
   "next_run_time": "2026-07-20 17:42:12",
   "error_log": []
 }

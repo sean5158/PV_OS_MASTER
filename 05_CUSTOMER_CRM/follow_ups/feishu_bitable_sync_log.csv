@@ -1,0 +1,7 @@
+sync_id,lead_id,platform,account_name,customer_name,user_id,user_profile_url,video_url,comment_url,comment_text,region,intent_score,lead_grade,status,sync_mode,sync_success,synced_at
+SYNC_LEAD_DB_SAFE_175810,LEAD_DB_SAFE,,,,,,,,,,0,,pending,mock,True,2026-07-20 17:58:10
+SYNC_LEAD_DB_SAFE_175828,LEAD_DB_SAFE,,,,,,,,,,0,,pending,mock,True,2026-07-20 17:58:28
+SYNC_LEAD_DB_SAFE_175846,LEAD_DB_SAFE,,,,,,,,,,0,,pending,mock,True,2026-07-20 17:58:46
+SYNC_LEAD_DB_SAFE_175934_0001,LEAD_DB_SAFE,,,,,,,,,,0,,pending,mock,True,2026-07-20 17:59:34
+SYNC_LEAD_DB_SAFE_175955_0001,LEAD_DB_SAFE,,,,,,,,,,0,,pending,mock,True,2026-07-20 17:59:55
+SYNC_LEAD_DB_SAFE_180033_0001,LEAD_DB_SAFE,,,,,,,,,,0,,pending,mock,True,2026-07-20 18:00:33
