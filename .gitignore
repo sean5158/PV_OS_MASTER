@@ -31,3 +31,12 @@ backup/latest/
 # generated AI context
 00_SYSTEM/PV_OS_AI_CONTEXT.md
 PV_OS_AI_CONTEXT_REPORT.md
+
+# P1 scheduler logs
+10_AI_AUTOMATION_ENGINE/scheduler/schedule_logs/
+
+# cleaned data (derived from raw)
+02_DATA/04_COMMENT_DATABASE/cleaned/
+
+# platform credentials
+02_DATA/01_COLLECTION/platform_credentials.yml

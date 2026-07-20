@@ -1,0 +1,95 @@
+# PV_OS 人工词根库 V1.0
+# 关键词全生命周期管理: 词根→扩展→评分→投放→回收
+# 最后更新: 2026-07-20
+# 维护规则: 月度审视，≤100条，废弃标记 status:deprecated
+
+keywords:
+  - keyword: "别墅光伏"
+    category: "场景词"
+    sub_category: "高端住宅"
+    source: "人工"
+    initial_score: 85
+    grade: "S"
+    region: ["四川", "重庆", "贵州"]
+    notes: "高客单价场景，直接竞品搜索使用"
+
+  - keyword: "家庭光伏"
+    category: "行业词"
+    sub_category: "户用光伏"
+    source: "人工"
+    initial_score: 80
+    grade: "S"
+    region: ["四川", "重庆", "贵州"]
+    notes: "覆盖最广的家庭光伏需求，核心词根"
+
+  - keyword: "阳光房光伏"
+    category: "场景词"
+    sub_category: "阳光房改造"
+    source: "人工"
+    initial_score: 78
+    grade: "A"
+    region: ["四川", "重庆", "贵州"]
+    notes: "差异化场景，小红书高频词，竞品稀缺"
+
+  - keyword: "光伏安装"
+    category: "需求词"
+    sub_category: "安装服务"
+    source: "人工"
+    initial_score: 82
+    grade: "S"
+    region: ["四川", "重庆", "贵州"]
+    notes: "直接指向安装需求的核心词"
+
+  - keyword: "光伏多少钱"
+    category: "需求词"
+    sub_category: "价格咨询"
+    source: "人工"
+    initial_score: 75
+    grade: "A"
+    region: ["四川", "重庆", "贵州"]
+    notes: "价格敏感型客户入口"
+
+  - keyword: "屋顶光伏"
+    category: "场景词"
+    sub_category: "屋顶改造"
+    source: "人工"
+    initial_score: 72
+    grade: "A"
+    region: ["四川", "重庆", "贵州"]
+    notes: "普通住宅+别墅通用场景"
+
+  - keyword: "民宿光伏"
+    category: "场景词"
+    sub_category: "小商业"
+    source: "人工"
+    initial_score: 70
+    grade: "A"
+    region: ["四川", "重庆", "贵州"]
+    notes: "小商业光伏场景，客单价中高"
+
+  - keyword: "光伏发电"
+    category: "行业词"
+    sub_category: "科普"
+    source: "人工"
+    initial_score: 65
+    grade: "A"
+    region: ["四川", "重庆", "贵州"]
+    notes: "行业通用词，噪声较高需组合使用"
+
+  - keyword: "储能"
+    category: "行业词"
+    sub_category: "储能系统"
+    source: "人工"
+    initial_score: 60
+    grade: "B"
+    region: ["四川", "重庆", "贵州"]
+    notes: "光伏关联词，独立搜索噪声高"
+
+  - keyword: "发电玻璃"
+    category: "行业词"
+    sub_category: "BIPV"
+    source: "人工"
+    initial_score: 55
+    grade: "B"
+    region: ["四川", "重庆", "贵州"]
+    notes: "建筑光伏一体化，城市高端场景"

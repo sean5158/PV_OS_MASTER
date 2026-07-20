@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-07-20T17:39:57.302652+08:00",
+  "source_period": "最近30天",
+  "source_video_count": 3,
+  "topics": [
+    {
+      "topic": "别墅业主光伏内容",
+      "video_count": 1,
+      "avg_comments": 100,
+      "trend": "stable",
+      "demand_signals": 5
+    },
+    {
+      "topic": "阳光房/露台业主光伏内容",
+      "video_count": 1,
+      "avg_comments": 100,
+      "trend": "stable",
+      "demand_signals": 5
+    },
+    {
+      "topic": "城市家庭光伏内容",
+      "video_count": 1,
+      "avg_comments": 100,
+      "trend": "stable",
+      "demand_signals": 5
+    }
+  ],
+  "demand_gaps": [
+    {
+      "gap_topic": "老旧小区光伏安装",
+      "demand_signals": 0,
+      "content_count": 0,
+      "opportunity_score": 0
+    },
+    {
+      "gap_topic": "阳光房光伏避坑",
+      "demand_signals": 8,
+      "content_count": 1,
+      "opportunity_score": 30
+    },
+    {
+      "gap_topic": "光伏储能一体",
+      "demand_signals": 0,
+      "content_count": 0,
+      "opportunity_score": 0
+    }
+  ],
+  "title_patterns": [
+    {
+      "pattern": "数字对比型",
+      "example": "电费从3000降到300",
+      "effectiveness": "high"
+    },
+    {
+      "pattern": "场景痛点型",
+      "example": "阳光房太晒怎么办",
+      "effectiveness": "high"
+    },
+    {
+      "pattern": "疑问解答型",
+      "example": "装了光伏一年后我后悔了吗",
+      "effectiveness": "medium"
+    },
+    {
+      "pattern": "过程实录型",
+      "example": "XX小区光伏安装全记录",
+      "effectiveness": "high"
+    }
+  ],
+  "hook_formulas": [
+    {
+      "formula": "数字对比型",
+      "example": "电费从3000降到300"
+    },
+    {
+      "formula": "场景痛点型",
+      "example": "阳光房太晒怎么办？"
+    },
+    {
+      "formula": "悬念反问型",
+      "example": "光伏到底能不能省电？"
+    },
+    {
+      "formula": "过程展示型",
+      "example": "光伏安装全过程，3分钟看懂"
+    }
+  ],
+  "recommended_topics": [
+    "成都别墅业主：光伏一年真实电费对比",
+    "重庆阳光房改造：遮阳+发电一石二鸟",
+    "贵阳小商业光伏：棋牌室/茶楼月省电费实测",
+    "成都老旧小区屋顶光伏安装全记录",
+    "叠拼业主光伏避坑指南（川渝黔版）"
+  ]
+}

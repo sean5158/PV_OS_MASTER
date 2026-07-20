@@ -1,0 +1,28 @@
+{
+  "analysis_id": "VA_dy_v002_20260720170416117128",
+  "video_id": "dy_v002",
+  "video_title": "阳光房光伏改造案例",
+  "hook_3_seconds": "场景痛点：阳光房太晒怎么办？一个方案解决两个问题",
+  "pain_point": "阳光房夏天太热、冬天太冷",
+  "customer_type": "阳光房/露台业主",
+  "video_structure": "场景展示 → 问题提出 → 解决方案 → 效果展示 → 引导咨询",
+  "title_pattern": "场景痛点型：阳光房太晒？装光伏一举两得",
+  "comment_trigger": "很多人有阳光房但不知道能装光伏",
+  "viral_reason": "差异化场景 + 一石二鸟（遮阳+发电）",
+  "turning_point": "第10秒展示装光伏前后的温度对比",
+  "closing_factor": "遮阳+发电双重价值",
+  "viral_score": 100,
+  "reusability_score": 80,
+  "reusable": {
+    "hook_template": "场景痛点：阳光房太晒怎么办？一个方案解决两个问题",
+    "structure_template": "场景展示 → 问题提出 → 解决方案 → 效果展示 → 引导咨询",
+    "key_phrases": [],
+    "angle_suggestions": [
+      "加入四川本地元素",
+      "展示真实施工现场",
+      "成都日照数据计算回本"
+    ]
+  },
+  "analyzed_at": "2026-07-20T17:04:16.117096+08:00",
+  "source_video_id": ""
+}

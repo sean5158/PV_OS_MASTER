@@ -1,0 +1,28 @@
+{
+  "analysis_id": "VA_dy_v003_20260720170433337514",
+  "video_id": "dy_v003",
+  "video_title": "家庭光伏安装流程",
+  "hook_3_seconds": "悬念式：光伏到底能不能省电？我用一年数据告诉你",
+  "pain_point": "普通家庭担心装了没用、回本慢",
+  "customer_type": "城市家庭",
+  "video_structure": "悬念开场 → 安装过程 → 数据展示 → 答疑 → CTA",
+  "title_pattern": "疑问解答型：普通家庭装光伏，一年后我后悔了吗？",
+  "comment_trigger": "用真实数据打消疑虑，评论区变成咨询台",
+  "viral_reason": "争议性话题 + 真实数据 + 情感共鸣",
+  "turning_point": "第20秒展示电费对比图",
+  "closing_factor": "用真实用户数据建立信任",
+  "viral_score": 100,
+  "reusability_score": 60,
+  "reusable": {
+    "hook_template": "悬念式：光伏到底能不能省电？我用一年数据告诉你",
+    "structure_template": "悬念开场 → 安装过程 → 数据展示 → 答疑 → CTA",
+    "key_phrases": [],
+    "angle_suggestions": [
+      "加入四川本地元素",
+      "展示真实施工现场",
+      "展示川渝黔安装实拍"
+    ]
+  },
+  "analyzed_at": "2026-07-20T17:04:33.337492+08:00",
+  "source_video_id": ""
+}

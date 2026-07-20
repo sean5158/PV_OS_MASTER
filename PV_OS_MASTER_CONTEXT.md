@@ -440,3 +440,92 @@ AI 等级到 CRM 意向转换：S → 3 明确购买 / A → 2 咨询意向 / B 
 | V1.0（草案） | 2026-07-13 | 基于已有固化规则文件汇总生成，包含 10 个板块 |
 | V1.1（已修正） | 2026-07-13 | 基于 AUDIT V2.0 修正 9 项偏差：完整川渝黔区域表、房屋精确分值、时间分档、城市客户定位、消费能力判断、农村标题、维度顺序、LEADS 中间层、多维分类 |
 
+
+
+---
+
+## 十一、P1 阶段模块状态（2026-07-20 更新）
+
+### P1-1: 采集任务模型
+
+| 组件 | 路径 | 状态 |
+|------|------|:--:|
+| TaskManager | `02_DATA/01_COLLECTION/tasks/task_manager.py` | ✅ |
+| 任务持久化 | `02_DATA/01_COLLECTION/tasks/{task_id}.json` | ✅ |
+| 7 状态机 | pending→running→completed/failed/failed_final/paused/cancelled | ✅ |
+| 增量游标 | last_cursor 自动继承 | ✅ |
+| 失败重试 | 3 次退避 (5m/30m/2h) | ✅ |
+
+### P1-2: 评论意图语义模型
+
+| 组件 | 路径 | 状态 |
+|------|------|:--:|
+| IntentAnalyzer | `03_AI_AGENT/strategies/comment_intent_model.py` | ✅ |
+| 意图分级 | L0(无需求) / L1(潜在兴趣) / L2(咨询) / L3(明确购买) | ✅ |
+| 否定检测 | 7 种否定模式 | ✅ |
+| 上下文增强 | 视频标题提升意图级别 | ✅ |
+| Pipeline 接入 | `step_executor.analyze_comment` | ✅ |
+
+### P1-3: 竞品账号分析
+
+| 组件 | 路径 | 状态 |
+|------|------|:--:|
+| analyze_source_account handler | `step_executor.py` | ✅ |
+| CSV 匹配 | 精确 + 名称模糊 | ✅ |
+| 启发式分类 | 4 类账号分类 + 双维评分 | ✅ |
+
+### P1-4: 调度器增强
+
+| 组件 | 路径 | 状态 |
+|------|------|:--:|
+| ScheduleLogger | `scheduler/collection_scheduler.py` | ✅ |
+| 执行日志 | `scheduler/schedule_logs/YYYY-MM-DD.json` | ✅ |
+| 失败重试拾取 | Phase 1: 自动拾取 failed 任务 | ✅ |
+| Per-platform 并发 | douyin≤2, xiaohongshu≤1, kuaishou≤1 | ✅ |
+
+### 测试覆盖
+
+| 文件 | 测试数 |
+|------|:--:|
+| test_pipeline.py | 6 |
+| test_task_model.py | 32 |
+| test_intent_model.py | 28 |
+| test_competitor_account.py | 9 |
+| test_scheduler.py | 19 |
+| **合计** | **94** |
+
+---
+
+## 十二、P1 阶段冻结 (2026-07-20)
+
+P1 阶段全部完成。系统已具备完整的数据采集→分析→评分→CRM 链路，
+代码层全部就绪，待 P2 配置真实平台凭证和竞品账号数据后即可运行。
+
+### P1 交付物总览
+
+| 模块 | 文件数 | 行数 | 测试 |
+|------|:--:|:--:|:--:|
+| 采集模块骨架 | 4 | ~120 | — |
+| 连接器基座 + 4平台 | 5 | ~600 | — |
+| 数据清洗 | 1 | ~220 | — |
+| 任务模型 | 1 | ~400 | 32 |
+| 意图模型 | 1 | ~380 | 28 |
+| 竞品分析 | (step_executor) | ~180 | 9 |
+| 调度器 V2 | 1 | ~360 | 19 |
+| Pipeline 原有 | 4 | ~600 | 6 |
+| **合计** | **~18 文件** | **~2860 行** | **94** |
+
+### P2 入口
+
+```bash
+# 1. 配置平台凭证
+cp 02_DATA/01_COLLECTION/platform_credentials.template.yml \
+   02_DATA/01_COLLECTION/platform_credentials.yml
+# 编辑 platform_credentials.yml 填写真实 cookie
+
+# 2. 填充竞品账号
+# 编辑 02_DATA/02_COMPETITOR_DATABASE/competitor_accounts.csv
+
+# 3. 播种 + 首次运行
+python3 10_AI_AUTOMATION_ENGINE/scheduler/collection_scheduler.py --once --seed
+```

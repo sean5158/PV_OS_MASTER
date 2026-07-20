@@ -1,0 +1,8 @@
+competitor_id,platform,account_id,account_name,account_url,account_type,bio,grade,total_score,discovery_keyword,discovery_date,follower_count,ip_location,monitor_level,monitor_frequency,status,score_business_match,score_home_pv,score_premium_scene,score_region,score_comment_value,score_activity,account_purpose,learning_priority
+PV_COMP_000001,douyin,reg_install_001,成都光伏老王,https://douyin.com/user/reg_install_001,regional_installer,成都本地光伏安装团队，专注家庭光伏10年,S,87,成都光伏安装,2026-07-20,35000,四川成都,S,6h,active,30,18,9,11,9,10,customer_source,0
+PV_COMP_000002,douyin,reg_install_002,重庆阳光光伏,https://douyin.com/user/reg_install_002,regional_installer,重庆主城光伏安装公司,A,74,重庆光伏,2026-07-20,12000,重庆,A,daily,active,30,18,3,8,6,9,customer_source,0
+PV_COMP_000003,douyin,city_case_001,别墅光伏改造日记,https://douyin.com/user/city_case_001,city_case,专注高端别墅光伏改造，实拍案例分享,S,83,别墅光伏,2026-07-20,50000,四川成都,S,6h,active,27,18,9,10,9,10,customer_source,0
+PV_COMP_000004,douyin,nat_brand_001,正泰安能,https://douyin.com/user/nat_brand_001,national_brand,正泰集团旗下户用光伏品牌，全国安装服务,A,70,光伏安装,2026-07-20,250000,浙江杭州,A,daily,active,28,14,6,10,6,6,both,5
+PV_COMP_000005,douyin,nat_brand_002,天合富家,https://douyin.com/user/nat_brand_002,national_brand,天合光能旗下分布式光伏品牌,B,53,家庭光伏,2026-07-20,180000,江苏常州,B,weekly,active,28,14,0,5,3,3,both,5
+PV_COMP_000006,douyin,reg_install_003,贵阳光伏安装-老周,https://douyin.com/user/reg_install_003,regional_installer,贵阳本地光伏安装，工商业+家庭都做,A,68,贵阳光伏,2026-07-20,8000,贵州贵阳,A,daily,active,30,18,0,8,6,6,customer_source,0
+PV_COMP_000007,xiaohongshu,city_case_002,阳光房改造指南,https://xiaohongshu.com/user/city_case_002,city_case,阳光房设计+光伏一体化，露台改造专家,A,71,阳光房光伏,2026-07-20,28000,四川成都,A,daily,active,27,18,6,5,6,9,customer_source,0

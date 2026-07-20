@@ -1,0 +1,47 @@
+# PV_OS 采集配置 V1.0
+# 2026-07-20
+
+# ── 平台配置 ──
+platforms:
+  douyin:
+    enabled: true
+    priority: P0
+    schedule: "0 */6 * * *"  # 每6小时
+    rate_limit:
+      requests_per_minute: 10
+      cooldown_seconds: 30
+
+  xiaohongshu:
+    enabled: true
+    priority: P1
+    schedule: "0 9 * * *"    # 每日09:00
+    rate_limit:
+      requests_per_minute: 5
+      cooldown_seconds: 60
+
+  kuaishou:
+    enabled: false
+    priority: P2
+    schedule: "0 9 * * 1"    # 每周一
+
+  wechat_video:
+    enabled: false
+    priority: P3
+
+# ── 竞品账号选取 ──
+competitor_selection:
+  min_grade: B               # 最低采集等级
+  max_accounts_per_run: 20   # 单次最大采集账号数
+
+# ── 数据输出 ──
+output:
+  raw_dir: "02_DATA/raw"
+  schema_version: "V1.0"
+  format: json
+  batch_size: 50             # 每批评论数
+
+# ── 评论过滤 ──
+filters:
+  min_comment_length: 1      # 最少字符数
+  remove_emoji_only: true    # 去掉纯emoji评论
+  drop_duplicates: true      # 按comment_id去重

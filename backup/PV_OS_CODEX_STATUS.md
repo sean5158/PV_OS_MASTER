@@ -1,10 +1,7 @@
 # PV_OS_CODEX_STATUS
 
-版本：
-V1.2
-
-日期：
-2026-07-13 20:53
+版本：V1.3
+日期：2026-07-20
 
 
 ==================================================
@@ -22,32 +19,36 @@ V1.2
 
 # 二、当前状态
 
-状态：MASTER_CONTEXT V1.1 修正完成
+状态：Phase 2.6 完成 — comment_collector_agent 代码实现
 
-当前任务：lead_scoring_agent 开发
+当前任务：Phase 2.7 真实数据接入验证
 
-当前模块：03_AI_AGENT
+当前模块：08_SYSTEM/scripts + 10_AI_AUTOMATION_ENGINE/scheduler
 
-当前阶段：Agent 配置开发
+当前阶段：采集链路代码层完成，待真实平台数据验证
 
 
 ==================================================
 
-# 三、最近读取文件
+# 三、最近修改文件
 
-- PV_OS_BOOTSTRAP.md
-- PV_OS_MASTER_CONTEXT.md（V1.1）
-- PV_OS_FILE_REGISTRY.md
-- PV_OS_CONTEXT_PROTOCOL.md
-- PV_OS_CUSTOMER_MODEL_AUDIT.md（V2.0）
-- PV_OS_CONTEXT_CORRECTION_PLAN.md
-- backup/PV_OS_BACKUP_MAP_V1.0.md
-- backup/PV_OS_RULE_INDEX.md
-- backup/PV_OS_BUSINESS_TREE.md
-- backup/PV_OS_STATUS.md
-- backup/PV_OS_CODEX_STATUS.md
-- 00_SYSTEM/PV_OS_CODEX_RULES.md
-- 02_DATA/ 全部客户相关规则文件
+- 02_DATA/01_COLLECTION/README.md (新建)
+- 02_DATA/01_COLLECTION/COLLECTION_RULE.md (新建)
+- 02_DATA/01_COLLECTION/config.yml (新建)
+- 02_DATA/01_COLLECTION/platform_credentials.template.yml (新建)
+- 08_SYSTEM/scripts/config_loader.py (新建)
+- 08_SYSTEM/scripts/collector_base.py (新建)
+- 08_SYSTEM/scripts/douyin_connector.py (新建)
+- 08_SYSTEM/scripts/xiaohongshu_connector.py (新建)
+- 08_SYSTEM/scripts/kuaishou_connector.py (新建)
+- 08_SYSTEM/scripts/wechat_video_connector.py (新建)
+- 08_SYSTEM/scripts/data_cleaner.py (新建)
+- 08_SYSTEM/scripts/run_collector.py (新建)
+- 10_AI_AUTOMATION_ENGINE/scheduler/collection_scheduler.py (新建)
+- 03_AI_AGENT/agents/comment_collector_agent/README.md (新建)
+- 00_SYSTEM/PV_OS_PROJECT_STATUS.md (更新)
+- 00_SYSTEM/PV_OS_P0_VALIDATION_REPORT.md (更新)
+- PV_OS_CURRENT_STATE.md (更新)
 
 
 ==================================================
@@ -56,7 +57,24 @@ V1.2
 
 PV_OS 核心流程：
 
-评论采集 → comment_analyzer → lead_scoring_agent → 05_CUSTOMER_LEADS（中间层） → 05_CUSTOMER_CRM → S级 hot / A-B级 qualified / C级 raw → 销售跟进
+采集配置(02_DATA/01_COLLECTION/) → 连接器(08_SYSTEM/scripts/) → raw/ → data_cleaner → event_bus → comment_to_lead_pipeline → CRM
+
+新增采集链路：
+
+```
+config.yml → collector_base.py → douyin_connector (Mock/Live)
+                              → xiaohongshu_connector (Mock/Live)
+                              → kuaishou_connector (桩)
+                              → wechat_video_connector (桩)
+         ↓
+   02_DATA/raw/{platform}/YYYY-MM-DD/batch_HHh_NNN.json
+         ↓
+   data_cleaner.py (去重 → 标准化 → 去噪 → 校验)
+         ↓
+   02_DATA/04_COMMENT_DATABASE/cleaned/
+         ↓
+   event_bus → new_comment_received → Pipeline
+```
 
 
 ==================================================
@@ -65,71 +83,51 @@ PV_OS 核心流程：
 
 - Backup Engine：完成
 - Codex 接入：完成
-- 项目上下文体系：完成（MASTER_CONTEXT / FILE_REGISTRY / CONTEXT_PROTOCOL / AUDIT / CORRECTION_PLAN）
+- 项目上下文体系：完成
+- P0 Pipeline 验证：完成（5 项全部通过）
+- Phase 2.6 采集链路代码：完成（本次）
 
 
 ==================================================
 
 # 六、当前开发任务
 
-任务：完成 03_AI_AGENT/agents/lead_scoring_agent/agent.yml
+任务：Phase 2.7 真实平台数据接入验证
 
-目标：comment_analyzer 输出 → 评分模型 → S/A/B/C 等级 → CRM 流转
-
-
-==================================================
-
-# 七、修改记录
-
-2026-07-13：
-
-- PV_OS_MASTER_CONTEXT.md V1.0 → V1.1（9项修正，详见 CORRECTION_PLAN）
-- PV_OS_STATUS.md V1.0 → V1.1
-- PV_OS_CODEX_STATUS.md V1.1 → V1.2
-- pvbackup：snapshots/PV_OS_SNAPSHOT_2026-07-13_20-53-28.tar.gz
+子任务：
+1. 准备抖音平台 cookie/API 凭证
+2. 跑通真实抖音评论采集
+3. 验证采集 → 清洗 → Pipeline 全链路
+4. 小红书手工数据导入测试
+5. 竞品主表 competitor_accounts.csv 填充真实账号
 
 
 ==================================================
 
-# 八、测试记录
+# 七、测试记录
 
-- Codex 上下文恢复测试：成功
-- 客户模型审计：20个固化文件逐项对照，9项偏差已全部修正
-
-
-==================================================
-
-# 九、阻塞问题
-
-无
+- 2026-07-19: P0 Pipeline 端到端测试（20条, 100%通过）
+- 2026-07-20: 采集模块代码结构验证（需后续功能测试）
 
 
 ==================================================
 
-# 十、下一步计划
+# 八、阻塞问题
 
-1. 完成 lead_scoring_agent/agent.yml
-2. 连接评分模型
-3. 模拟评论测试
-4. 验证 CRM 入库
-5. 执行 pvbackup
-
-
-==================================================
-
-# 十一、最后备份
-
-日期：2026-07-13 20:53
-
-路径：snapshots/PV_OS_SNAPSHOT_2026-07-13_20-53-28.tar.gz
+| # | 问题 | 状态 |
+|---|------|:--:|
+| 1 | 抖音 API 凭证未配置 | 📋 待用户配置 |
+| 2 | competitor_accounts.csv 需填真实竞品账号 | 📋 待用户填充 |
+| 3 | 小红书反爬严格，需手动导入方案 | 📋 已提供 import_from_file() |
 
 
 ==================================================
 
-# 十二、版本记录
+# 九、下一步计划
 
-|版本|日期|说明|
-|-|-|-|
-|V1.0|2026-07-13|初始状态文件|
-|V1.1|2026-07-13|增加 Codex 开发记忆|
-|V1.2|2026-07-13|MASTER_CONTEXT V1.1 修正 + 客户模型审计完成|
+1. Phase 2.7: 真实数据接入验证
+2. competitor_account_agent Pipeline 接入
+3. 定时采集 Cron 自动化
+4. 竞品自动发现
+
+==================================================
