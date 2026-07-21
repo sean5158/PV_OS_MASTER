@@ -1,0 +1,29 @@
+{
+  "analysis_id": "VA_dy_v001_20260721100155913841",
+  "video_id": "dy_v001",
+  "video_title": "别墅光伏安装实拍",
+  "hook_3_seconds": "数字对比：电费从3000降到300",
+  "pain_point": "城市别墅业主电费高但不知道光伏能省多少",
+  "customer_type": "别墅业主",
+  "video_structure": "痛点开场 → 方案展示 → 数据对比 → 客户见证 → 引导咨询",
+  "title_pattern": "数字对比型：我家XX平米装了光伏，一年省了X万",
+  "comment_trigger": "评论里很多人问'我家能装吗'——制造了代入感",
+  "viral_reason": "强数字对比 + 真实案例 + 本地信任感",
+  "turning_point": "第15秒展示电费账单对比",
+  "closing_factor": "本地案例 + 可上门测量",
+  "viral_score": 100,
+  "reusability_score": 80,
+  "reusable": {
+    "hook_template": "数字对比：电费从3000降到300",
+    "structure_template": "痛点开场 → 方案展示 → 数据对比 → 客户见证 → 引导咨询",
+    "key_phrases": [],
+    "angle_suggestions": [
+      "加入四川本地元素",
+      "展示真实施工现场",
+      "成都别墅案例对标",
+      "展示川渝黔安装实拍"
+    ]
+  },
+  "analyzed_at": "2026-07-21T10:01:55.913826+08:00",
+  "source_video_id": ""
+}

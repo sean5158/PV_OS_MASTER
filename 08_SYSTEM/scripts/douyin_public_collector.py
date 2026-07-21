@@ -64,7 +64,7 @@ class DouyinPublicCollector(PublicSearchCollector):
         """延迟加载 Parser（避免循环导入 + 启动开销）。"""
         if self._parser is None:
             from douyin_page_parser import DouyinPageParser  # noqa: PLC0415
-            self._parser = DouyinPageParser()
+            self._parser = DouyinPageParser(mode=self.mode)
 
     def _ensure_fetcher(self):
         """延迟加载 Fetcher，按模式选择。"""
