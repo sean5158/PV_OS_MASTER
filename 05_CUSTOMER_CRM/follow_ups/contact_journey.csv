@@ -1,7 +1,10 @@
 journey_id,lead_id,user_id,user_name,platform,comment_content_snippet,source_url,user_profile_url,status,contact_channel,first_contact_at,last_contact_at,notes,owner,created_at,updated_at
 JOURNEY_024B799D,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-20 17:58:46,
+JOURNEY_13C48F5E,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-21 08:05:57,
 JOURNEY_16BE9806,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-20 18:00:32,
 JOURNEY_430B8DA2,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-20 17:59:34,
+JOURNEY_71411026,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-21 08:06:15,
 JOURNEY_90F60AD9,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-20 17:58:10,
 JOURNEY_9F6841CA,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-20 17:59:55,
 JOURNEY_D1ECB2F1,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-20 17:58:28,
+JOURNEY_FFA35FB6,LEAD_REGRESSION,u001,,,,,,pending,,,,,,2026-07-21 08:06:36,

@@ -23,15 +23,15 @@
     "per_video": 50,
     "time_window_days": 0
   },
-  "status": "pending",
+  "status": "completed",
   "retry_count": 0,
   "max_retries": 3,
   "last_cursor": "dy_mock_PV_COMP_000002_006",
-  "last_collected_count": 0,
-  "total_collected_count": 12,
+  "last_collected_count": 6,
+  "total_collected_count": 18,
   "created_time": "2026-07-20 18:00:17",
-  "updated_time": "2026-07-20 18:00:17",
-  "last_run_time": "",
+  "updated_time": "2026-07-21 08:06:07",
+  "last_run_time": "2026-07-21 08:06:07",
   "next_run_time": "2026-07-21 00:00:17",
   "error_log": []
 }

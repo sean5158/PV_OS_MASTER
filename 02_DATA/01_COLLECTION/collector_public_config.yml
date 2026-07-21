@@ -1,0 +1,38 @@
+# PV_OS Public Collector 配置 (P3-2)
+# 真实公开页面采集的安全参数
+
+public_collector:
+  # 模式: mock | public | auto
+  # auto = public优先，失败降级mock
+  default_mode: mock
+
+  # 速率限制
+  rate_limit:
+    requests_per_minute: 2          # 每分钟最多2次 (≈30s间隔)
+    min_interval_seconds: 5         # 两次请求最小间隔
+    max_requests_per_day: 100       # 每天最多100次 (P3-2阶段)
+    cooldown_on_block_seconds: 300  # 被限流后冷却5分钟
+
+  # User-Agent 池
+  user_agents:
+    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Safari/605.1.15"
+    - "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+
+  # 超时
+  http_timeout_seconds: 15
+
+  # 已启用平台 (按优先级)
+  enabled_platforms:
+    - douyin
+    # - xiaohongshu  # P4
+    # - kuaishou      # P4
+    # - shipinhao     # P4
+
+  # 风控规则
+  safety:
+    no_cookies: true                # 不携带Cookie
+    no_private_data: true           # 不采集私密数据
+    respect_robots: true            # 遵守robots.txt精神
+    debug_log_requests: true        # P3-2阶段记录所有请求日志

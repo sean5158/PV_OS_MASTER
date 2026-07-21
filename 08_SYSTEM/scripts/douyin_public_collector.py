@@ -67,10 +67,15 @@ class DouyinPublicCollector(PublicSearchCollector):
             self._parser = DouyinPageParser()
 
     def _ensure_fetcher(self):
-        """延迟加载 Fetcher（Mock 模式不需要）。"""
+        """延迟加载 Fetcher，按模式选择。"""
         if self._fetcher is None:
-            from page_fetcher import MockPageFetcher  # noqa: PLC0415
-            self._fetcher = MockPageFetcher()
+            if self.mode == "public":
+                from page_fetcher import PublicPageFetcher  # noqa: PLC0415
+                self._fetcher = PublicPageFetcher()
+                logger.info("DouyinPublicCollector: 启用 PublicPageFetcher (真实HTTP)")
+            else:
+                from page_fetcher import MockPageFetcher  # noqa: PLC0415
+                self._fetcher = MockPageFetcher()
 
     # ══════════════════════════════════════════════════════════════════
     # search_by_keywords
