@@ -1,0 +1,206 @@
+{
+  "insight_id": "CI_20260721123154",
+  "generated_at": "2026-07-21T12:31:54.650502+08:00",
+  "source_period": "最近30天",
+  "source_video_count": 6,
+  "topics": [
+    {
+      "topic": "别墅光伏安装",
+      "video_count": 1,
+      "avg_viral_score": 85,
+      "avg_engagement": 180,
+      "trend": "rising",
+      "demand_signals": 15,
+      "competitive_intensity": "high"
+    },
+    {
+      "topic": "阳光房光伏改造",
+      "video_count": 1,
+      "avg_viral_score": 78,
+      "avg_engagement": 160,
+      "trend": "rising",
+      "demand_signals": 12,
+      "competitive_intensity": "low"
+    },
+    {
+      "topic": "其他",
+      "video_count": 1,
+      "avg_viral_score": 92,
+      "avg_engagement": 176,
+      "trend": "stable",
+      "demand_signals": 5,
+      "competitive_intensity": "medium"
+    },
+    {
+      "topic": "工商业光伏",
+      "video_count": 1,
+      "avg_viral_score": 70,
+      "avg_engagement": 130,
+      "trend": "stable",
+      "demand_signals": 8,
+      "competitive_intensity": "medium"
+    },
+    {
+      "topic": "家庭光伏省钱",
+      "video_count": 1,
+      "avg_viral_score": 88,
+      "avg_engagement": 150,
+      "trend": "stable",
+      "demand_signals": 20,
+      "competitive_intensity": "high"
+    },
+    {
+      "topic": "光伏避坑指南",
+      "video_count": 1,
+      "avg_viral_score": 95,
+      "avg_engagement": 184,
+      "trend": "stable",
+      "demand_signals": 14,
+      "competitive_intensity": "medium"
+    }
+  ],
+  "demand_gaps": [
+    {
+      "gap_topic": "光伏+阳光房一体化",
+      "demand_signals": 24,
+      "content_count": 1,
+      "opportunity_score": 100,
+      "suggested_angle": "遮阳发电二合一：阳光房改造最佳实践",
+      "target_audience": "阳光房业主"
+    },
+    {
+      "gap_topic": "叠拼/联排别墅光伏",
+      "demand_signals": 18,
+      "content_count": 1,
+      "opportunity_score": 90,
+      "suggested_angle": "叠拼屋顶复杂结构的光伏安装方案",
+      "target_audience": "叠拼/联排业主"
+    },
+    {
+      "gap_topic": "光伏+储能真实回本周期",
+      "demand_signals": 18,
+      "content_count": 1,
+      "opportunity_score": 90,
+      "suggested_angle": "川渝地区光伏+储能真实回本计算",
+      "target_audience": "家庭用户"
+    },
+    {
+      "gap_topic": "老旧小区屋顶光伏审批",
+      "demand_signals": 12,
+      "content_count": 0,
+      "opportunity_score": 60,
+      "suggested_angle": "老旧小区光伏安装：物业审批全流程",
+      "target_audience": "老旧小区业主"
+    }
+  ],
+  "title_patterns": [
+    {
+      "pattern": "数字对比型",
+      "count": "2",
+      "effectiveness": "high"
+    },
+    {
+      "pattern": "场景痛点型",
+      "count": "2",
+      "effectiveness": "high"
+    },
+    {
+      "pattern": "好奇牵引型",
+      "count": "1",
+      "effectiveness": "medium"
+    },
+    {
+      "pattern": "反常识警告型",
+      "count": "1",
+      "effectiveness": "medium"
+    },
+    {
+      "pattern": "过程实录型",
+      "example": "XX小区光伏安装全记录",
+      "effectiveness": "high"
+    }
+  ],
+  "hook_formulas": [
+    {
+      "formula": "数字对比型",
+      "example": "电费从3000降到300",
+      "usage": "6"
+    },
+    {
+      "formula": "场景痛点型",
+      "example": "阳光房太晒怎么办？",
+      "usage": "3"
+    },
+    {
+      "formula": "身份共鸣型",
+      "example": "别墅业主最关心的3个问题",
+      "usage": "6"
+    },
+    {
+      "formula": "过程展示型",
+      "example": "光伏安装全过程，3分钟看懂",
+      "usage": "2"
+    }
+  ],
+  "recommended_topics": [
+    "光伏+储能真实回本周期: 川渝地区光伏+储能真实回本计算",
+    "叠拼/联排别墅光伏: 叠拼屋顶复杂结构的光伏安装方案",
+    "光伏+阳光房一体化: 遮阳发电二合一：阳光房改造最佳实践",
+    "成都别墅业主：光伏一年真实电费对比",
+    "重庆阳光房改造：遮阳+发电一石二鸟",
+    "贵阳小商业光伏：棋牌室/茶楼月省电费实测",
+    "成都老旧小区屋顶光伏安装全记录"
+  ],
+  "content_calendar": [
+    {
+      "day": "周一",
+      "topic": "光伏知识科普",
+      "content_type": "short_video",
+      "production_mode": "ai_digital",
+      "target_platform": "douyin"
+    },
+    {
+      "day": "周二",
+      "topic": "本地安装案例",
+      "content_type": "short_video",
+      "production_mode": "human_shoot",
+      "target_platform": "douyin"
+    },
+    {
+      "day": "周三",
+      "topic": "避坑指南/答疑",
+      "content_type": "image_text",
+      "production_mode": "human_shoot",
+      "target_platform": "douyin"
+    },
+    {
+      "day": "周四",
+      "topic": "光伏省钱实测",
+      "content_type": "short_video",
+      "production_mode": "human_shoot",
+      "target_platform": "douyin"
+    },
+    {
+      "day": "周五",
+      "topic": "行业政策解读",
+      "content_type": "short_video",
+      "production_mode": "ai_digital",
+      "target_platform": "douyin"
+    },
+    {
+      "day": "周六",
+      "topic": "客户见证/口碑",
+      "content_type": "short_video",
+      "production_mode": "human_shoot",
+      "target_platform": "douyin"
+    },
+    {
+      "day": "周日",
+      "topic": "本周精选回顾",
+      "content_type": "image_text",
+      "production_mode": "ai_digital",
+      "target_platform": "douyin"
+    }
+  ],
+  "strategy_summary": "基于 6 条视频分析，当前 别墅光伏安装 话题内容供给充足但竞争激烈。建议重点切入 光伏+阳光房一体化 方向，该领域需求信号强但内容供给不足，是 PV_OS 差异化优势所在。本周推荐采用「本地案例 + 数据对比」的组合策略，持续建立区域信任。"
+}

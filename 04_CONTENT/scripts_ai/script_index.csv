@@ -1,2 +1,3 @@
-script_id,topic,platform,content_type,target_audience,source_analysis_id,source_video_id,angle,status,created_at,published_at
+script_id,topic,platform,content_type,target_audience,source_analysis_id,source_video_id,angle,production_mode,status,created_at,published_at
 SCRIPT_20260720_002,成都别墅光伏避坑指南,douyin,video,别墅业主,VA_dy_v001_20260720,,成都本地化：成都日照条件+本地安装案例,reviewed,2026-07-20T16:52:56.172878+08:00,
+SCRIPT_20260721122834,光伏知识科普：光伏是怎么发电的,douyin,video,普通家庭,,,零基础科普：3分钟看懂光伏原理,ai_digital,draft,2026-07-21T12:28:34.373846+08:00,
