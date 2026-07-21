@@ -1,7 +1,8 @@
-"""PV_OS Script Library Model V1.0。
+"""PV_OS Script Library Model V2.0 — Phase 3-3 增强。
 
-实现 PV_OS_CONTENT_INTELLIGENCE_MODEL_V1.md §三 AI二创脚本:
+实现 Phase3-3_CONTENT_INTELLIGENCE_DESIGN.md §六 ScriptLibrary:
     从 ContentInsight / VideoAnalysisResult → 生成二创脚本 → 脚本库
+    V2.0 新增: production_mode (human_shoot / ai_digital)
 
 存储: 04_CONTENT/scripts_ai/ (Markdown 脚本文件)
 索引: 04_CONTENT/scripts_ai/script_index.csv
@@ -10,7 +11,7 @@ Usage::
 
     from script_library_model import ScriptEntry, ScriptLibrary
     lib = ScriptLibrary()
-    lib.add(ScriptEntry(topic="别墅光伏避坑指南", platform="douyin", ...))
+    lib.add(ScriptEntry(topic="别墅光伏避坑指南", platform="douyin", production_mode="human_shoot"))
 """
 
 from __future__ import annotations
@@ -38,7 +39,7 @@ TZ_SHANGHAI = timezone(timedelta(hours=8))
 SCRIPT_INDEX_FIELDS = [
     "script_id", "topic", "platform", "content_type",
     "target_audience", "source_analysis_id", "source_video_id",
-    "angle", "status", "created_at", "published_at",
+    "angle", "production_mode", "status", "created_at", "published_at",
 ]
 
 
@@ -58,7 +59,10 @@ class ScriptScene:
 
 @dataclass
 class ScriptEntry:
-    """二创脚本条目 — 对标 PV_OS_CONTENT_INTELLIGENCE_MODEL_V1.md §三.3。"""
+    """二创脚本条目 — 对标 Phase3-3_CONTENT_INTELLIGENCE_DESIGN.md §六.3。
+
+    V2.0 新增: production_mode 支持人工拍摄和AI数字人两种生产模式。
+    """
 
     # ── 标识 ──
     script_id: str = ""
@@ -80,6 +84,9 @@ class ScriptEntry:
     scenes: list[ScriptScene] = field(default_factory=list)
     closing_cta: str = ""           # 结尾引导
 
+    # ── Phase 3-3 新增: 生产模式 ──
+    production_mode: str = "human_shoot"  # human_shoot / ai_digital
+
     # ── 元数据 ──
     ai_model: str = "mock"          # 生成模型
     reviewer: str = ""              # 审核人
@@ -94,7 +101,10 @@ class ScriptEntry:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ScriptEntry":
+        """从字典反序列化，兼容旧版缺少 production_mode 的数据。"""
         scenes_raw = data.pop("scenes", [])
+        # 为旧版数据补上默认 production_mode
+        data.setdefault("production_mode", "human_shoot")
         valid = {k: v for k, v in data.items() if k in cls.__dataclass_fields__}
         entry = cls(**valid)
         entry.scenes = [ScriptScene(**s) if isinstance(s, dict) else s for s in scenes_raw]
@@ -102,6 +112,11 @@ class ScriptEntry:
 
     def to_markdown(self) -> str:
         """生成 Markdown 格式脚本文件。"""
+        mode_label = {
+            "human_shoot": "🎬 人工拍摄",
+            "ai_digital": "🤖 AI 数字人口播",
+        }.get(self.production_mode, self.production_mode)
+
         lines = [
             f"# {self.title or self.topic}",
             "",
@@ -109,16 +124,25 @@ class ScriptEntry:
             f"**平台**: {self.platform}",
             f"**目标客群**: {self.target_audience}",
             f"**差异化角度**: {self.angle}",
+            f"**生产模式**: {mode_label}",
             f"**来源分析**: {self.source_analysis_id}",
             f"**生成模型**: {self.ai_model}",
             f"**状态**: {self.status}",
             "",
             "---",
             "",
+        ]
+
+        # AI 数字人模式: 添加画面素材提示
+        if self.production_mode == "ai_digital":
+            lines.append("> ⚠️ **AI数字人模式**: 需准备画面素材（B-roll / 图示 / 动画）配合口播使用。")
+            lines.append("")
+
+        lines.extend([
             f"## 开头钩子",
             f"> {self.hook}",
             "",
-        ]
+        ])
 
         if self.scenes:
             lines.append("## 分镜脚本")
@@ -150,18 +174,21 @@ class ScriptLibrary:
     - 脚本: 04_CONTENT/scripts_ai/{script_id}.md
     """
 
-    def __init__(self) -> None:
-        SCRIPTS_AI_DIR.mkdir(parents=True, exist_ok=True)
+    def __init__(self, scripts_dir: Path | None = None, csv_path: Path | None = None) -> None:
+        self._scripts_dir = scripts_dir or SCRIPTS_AI_DIR
+        self._csv_path = csv_path or SCRIPT_INDEX_CSV
+        self._scripts_dir.mkdir(parents=True, exist_ok=True)
 
     def add(self, entry: ScriptEntry) -> ScriptEntry:
-        """添加脚本到库。"""
+        """添加脚本到库中。"""
         if not entry.script_id:
-            date_str = datetime.now(TZ_SHANGHAI).strftime("%Y%m%d")
-            seq = len(self.list_all()) + 1
-            entry.script_id = f"SCRIPT_{date_str}_{seq:03d}"
+            ts = datetime.now(TZ_SHANGHAI).strftime("%Y%m%d%H%M%S%f")
+            entry.script_id = f"SCRIPT_{ts}"
+        if not entry.created_at:
+            entry.created_at = datetime.now(TZ_SHANGHAI).isoformat()
 
-        # 保存 Markdown
-        md_path = SCRIPTS_AI_DIR / f"{entry.script_id}.md"
+        # 写 Markdown
+        md_path = self._scripts_dir / f"{entry.script_id}.md"
         md_path.write_text(entry.to_markdown(), encoding="utf-8")
         logger.info("ScriptLibrary: 保存脚本 %s → %s", entry.script_id, md_path)
 
@@ -170,26 +197,20 @@ class ScriptLibrary:
         return entry
 
     def get(self, script_id: str) -> ScriptEntry | None:
-        """获取脚本。"""
-        md_path = SCRIPTS_AI_DIR / f"{script_id}.md"
-        if not md_path.exists():
-            return None
-        # 从索引读取元数据
-        for row in self._read_index():
+        """按 ID 获取脚本。"""
+        rows = self._read_index()
+        for row in rows[1:]:
             if row and row[0] == script_id:
-                d = dict(zip(SCRIPT_INDEX_FIELDS, row))
-                entry = ScriptEntry(**{k: v for k, v in d.items()
-                         if k in ScriptEntry.__dataclass_fields__})
-                return entry
+                d = dict(zip(SCRIPT_INDEX_FIELDS[:len(row)], row))
+                return ScriptEntry(**{k: v for k, v in d.items()
+                                      if k in ScriptEntry.__dataclass_fields__})
         return None
 
     def list_all(self) -> list[ScriptEntry]:
         """列出所有脚本。"""
         results: list[ScriptEntry] = []
         rows = self._read_index()
-        if len(rows) <= 1:
-            return results
-        for row in rows[1:]:  # skip header
+        for row in rows[1:]:
             if row and len(row) >= len(SCRIPT_INDEX_FIELDS):
                 d = dict(zip(SCRIPT_INDEX_FIELDS, row))
                 entry = ScriptEntry(**{k: v for k, v in d.items()
@@ -205,6 +226,10 @@ class ScriptLibrary:
         """按平台筛选。"""
         return [e for e in self.list_all() if e.platform == platform]
 
+    def list_by_production_mode(self, mode: str) -> list[ScriptEntry]:
+        """按生产模式筛选 (Phase 3-3 新增)。"""
+        return [e for e in self.list_all() if e.production_mode == mode]
+
     def update_status(self, script_id: str, status: str) -> bool:
         """更新脚本状态。"""
         entry = self.get(script_id)
@@ -219,9 +244,9 @@ class ScriptLibrary:
     # ── 内部 ──
 
     def _read_index(self) -> list[list[str]]:
-        if not SCRIPT_INDEX_CSV.exists():
+        if not self._csv_path.exists():
             return [SCRIPT_INDEX_FIELDS]
-        with open(SCRIPT_INDEX_CSV, "r", encoding="utf-8-sig", newline="") as f:
+        with open(self._csv_path, "r", encoding="utf-8-sig", newline="") as f:
             return list(csv.reader(f))
 
     def _update_index(self, entry: ScriptEntry) -> None:
@@ -231,7 +256,7 @@ class ScriptLibrary:
         }
         row = [str(getattr(entry, f, "")) for f in SCRIPT_INDEX_FIELDS]
         existing_dict[entry.script_id] = row
-        with open(SCRIPT_INDEX_CSV, "w", encoding="utf-8", newline="") as f:
+        with open(self._csv_path, "w", encoding="utf-8", newline="") as f:
             w = csv.writer(f)
             w.writerow(SCRIPT_INDEX_FIELDS)
             w.writerows(existing_dict.values())
@@ -245,10 +270,10 @@ if __name__ == "__main__":
     import tempfile, shutil
 
     print("=" * 60)
-    print("  ScriptLibrary — 自检")
+    print("  ScriptLibrary V2.0 — 自检 (Phase 3-3)")
     print("=" * 60)
 
-    # 创建脚本
+    # ── 创建人工拍摄脚本 ──
     entry = ScriptEntry(
         topic="成都别墅光伏避坑指南",
         platform="douyin",
@@ -257,6 +282,7 @@ if __name__ == "__main__":
         source_analysis_id="VA_dy_v001_20260720",
         title="成都别墅装光伏，这3个坑千万别踩！",
         hook="你家别墅想装光伏，但担心被坑？看完这条视频省5万！",
+        production_mode="human_shoot",
         scenes=[
             ScriptScene(scene_number=1, duration_seconds=5, type="hook",
                        text="你家别墅想装光伏，但担心被坑？", visuals="别墅外观画面"),
@@ -267,40 +293,93 @@ if __name__ == "__main__":
         ],
         closing_cta="想知道你家别墅装光伏要多少钱？评论区告诉我面积，免费算！",
     )
-
     print(f"  脚本: {entry.title}")
-    print(f"  平台: {entry.platform}")
-    print(f"  分镜: {len(entry.scenes)} 镜")
+    print(f"  生产模式: {entry.production_mode}")
+    assert entry.production_mode == "human_shoot"
 
-    # Markdown
+    # ── Markdown 含生产模式 ──
     md = entry.to_markdown()
     assert "成都别墅装光伏" in md
+    assert "🎬 人工拍摄" in md
     assert "第1镜" in md
-    print(f"  ✓ Markdown 生成: {len(md)} 字符")
+    print(f"  ✓ Markdown 含生产模式标签")
 
-    # 序列化
+    # ── 序列化 ──
     d = entry.to_dict()
+    assert d["production_mode"] == "human_shoot"
     e2 = ScriptEntry.from_dict(d)
     assert e2.topic == entry.topic
+    assert e2.production_mode == "human_shoot"
     assert len(e2.scenes) == 3
-    print("  ✓ to_dict/from_dict 正常")
+    print("  ✓ to_dict/from_dict 正常 (含 production_mode)")
 
-    # Library
-    old_dir = SCRIPTS_AI_DIR
+    # ── 旧版数据兼容 (无 production_mode) ──
+    old_data = {
+        "script_id": "SCRIPT_old",
+        "topic": "旧版脚本",
+        "platform": "douyin",
+        "content_type": "video",
+        "target_audience": "别墅业主",
+        "angle": "旧角度",
+        "source_analysis_id": "",
+        "source_video_id": "",
+        "title": "旧标题",
+        "hook": "旧钩子",
+        "scenes": [],
+        "closing_cta": "旧CTA",
+        "ai_model": "mock",
+        "reviewer": "",
+        "status": "draft",
+        "created_at": "2026-07-20T00:00:00",
+        "published_at": "",
+    }
+    e3 = ScriptEntry.from_dict(old_data)
+    assert e3.topic == "旧版脚本"
+    assert e3.production_mode == "human_shoot"  # 旧版默认 human_shoot
+    print("  ✓ 旧版数据兼容 (production_mode 默认 human_shoot)")
+
+    # ── AI 数字人脚本 ──
+    ai_entry = ScriptEntry(
+        topic="光伏知识科普：光伏是怎么发电的",
+        platform="douyin",
+        target_audience="普通家庭",
+        angle="零基础科普：3分钟看懂光伏原理",
+        title="光伏发电原理，3分钟讲明白！",
+        hook="你家电费太高？先搞懂光伏是怎么发电的",
+        production_mode="ai_digital",
+        scenes=[
+            ScriptScene(scene_number=1, duration_seconds=8, type="hook",
+                       text="光伏发电，其实就是把阳光变成电。简单说3个步骤...",
+                       visuals="动画：阳光→光伏板→电流"),
+        ],
+        closing_cta="关注我，下期讲光伏一年能省多少钱",
+    )
+    ai_md = ai_entry.to_markdown()
+    assert "🤖 AI 数字人口播" in ai_md
+    assert "画面素材" in ai_md
+    print(f"  ✓ AI数字人脚本 Markdown 含素材提示")
+
+    # ── Library 存储 (使用临时目录隔离) ──
     tmp_dir = Path(tempfile.mkdtemp())
-    # 临时替换 SCRIPTS_AI_DIR
-    import script_library_model
-    original = script_library_model.SCRIPTS_AI_DIR
-    script_library_model.SCRIPTS_AI_DIR = tmp_dir
-    script_library_model.SCRIPT_INDEX_CSV = tmp_dir / "script_index.csv"
+    lib = ScriptLibrary(scripts_dir=tmp_dir, csv_path=tmp_dir / "script_index.csv")
 
-    lib = ScriptLibrary()
     lib.add(entry)
     assert entry.script_id != ""
     loaded = lib.get(entry.script_id)
     assert loaded is not None
-    assert loaded.topic == "成都别墅光伏避坑指南"
+    assert loaded.production_mode == "human_shoot"
     print(f"  ✓ Library 保存/读取: {entry.script_id}")
+
+    # 添加 AI 数字人脚本
+    lib.add(ai_entry)
+    assert ai_entry.script_id != ""
+
+    # 按生产模式筛选
+    human_scripts = lib.list_by_production_mode("human_shoot")
+    ai_scripts = lib.list_by_production_mode("ai_digital")
+    assert len(human_scripts) == 1, f"Expected 1 human script, got {len(human_scripts)}"
+    assert len(ai_scripts) == 1, f"Expected 1 ai script, got {len(ai_scripts)}"
+    print(f"  ✓ 按生产模式筛选: human={len(human_scripts)}, ai={len(ai_scripts)}")
 
     # 状态更新
     lib.update_status(entry.script_id, "reviewed")
@@ -308,9 +387,6 @@ if __name__ == "__main__":
     assert updated is not None and updated.status == "reviewed"
     print(f"  ✓ 状态更新: {updated.status}")
 
-    # 恢复
-    script_library_model.SCRIPTS_AI_DIR = original
-    script_library_model.SCRIPT_INDEX_CSV = SCRIPT_INDEX_CSV
     shutil.rmtree(tmp_dir, ignore_errors=True)
 
-    print("\n✓ ScriptLibrary 自检完成\n")
+    print("\n✓ ScriptLibrary V2.0 自检完成\n")

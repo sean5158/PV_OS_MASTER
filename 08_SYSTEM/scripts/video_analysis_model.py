@@ -1,7 +1,8 @@
-"""PV_OS 视频分析模型 V1.0。
+"""PV_OS 视频分析模型 V2.0 — Phase 3-3 增强。
 
-实现 PV_OS_CONTENT_INTELLIGENCE_MODEL_V1.md §二 九维爆款拆解:
+实现 Phase3-3_CONTENT_INTELLIGENCE_DESIGN.md §二 + §五:
     输入: VideoAsset → 分析 → VideoAnalysisResult
+    V2.0 新增: conflict_pattern / cta_analysis / user_resonance
 
 Usage::
 
@@ -39,6 +40,8 @@ ANALYSIS_CSV_FIELDS = [
     "viral_reason", "turning_point", "closing_factor",
     "viral_score", "reusability_score",
     "analyzed_at", "source_video_id",
+    # Phase 3-3 扩展字段
+    "conflict_pattern", "cta_analysis", "user_resonance",
 ]
 
 
@@ -65,7 +68,10 @@ class ReusableElements:
 
 @dataclass
 class VideoAnalysisResult:
-    """视频爆款拆解结果 — 对标 PV_OS_CONTENT_INTELLIGENCE_MODEL_V1.md §二.2。"""
+    """视频爆款拆解结果 — 对标 Phase3-3_CONTENT_INTELLIGENCE_DESIGN.md §二 + §五。
+
+    V2.0 新增: conflict_pattern / cta_analysis / user_resonance
+    """
 
     # ── 标识 ──
     analysis_id: str = ""
@@ -82,6 +88,11 @@ class VideoAnalysisResult:
     viral_reason: str = ""          # 爆款原因
     turning_point: str = ""         # 转折点
     closing_factor: str = ""        # 成交因素
+
+    # ── Phase 3-3 扩展：八维增强分析 ──
+    conflict_pattern: str = ""      # 冲突模式（视频中的争议点/矛盾点）
+    cta_analysis: str = ""          # CTA 分析（引导方式拆解）
+    user_resonance: str = ""        # 用户共鸣点（引发情绪共鸣的关键要素）
 
     # ── 评分 ──
     viral_score: int = 0            # 爆款指数 0-100
@@ -101,11 +112,14 @@ class VideoAnalysisResult:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "VideoAnalysisResult":
+        """从字典反序列化，兼容旧版缺少 Phase 3-3 字段的数据。"""
         reusable = data.pop("reusable", {})
+        # 为旧版数据补上 Phase 3-3 默认值
+        for field_name in ("conflict_pattern", "cta_analysis", "user_resonance"):
+            data.setdefault(field_name, "")
         valid: dict[str, Any] = {}
         for k, v in data.items():
             if k in cls.__dataclass_fields__:
-                # 类型转换
                 field_type = cls.__dataclass_fields__[k].type
                 if str(field_type) == 'int' and isinstance(v, str):
                     try:
@@ -125,7 +139,8 @@ class VideoAnalysisResult:
 
     @classmethod
     def from_csv_row(cls, row: list[str]) -> "VideoAnalysisResult":
-        d = dict(zip(ANALYSIS_CSV_FIELDS, row))
+        """从 CSV 行反序列化，兼容旧版更少字段的行。"""
+        d = dict(zip(ANALYSIS_CSV_FIELDS[:len(row)], row))
         return cls.from_dict(d)
 
 
@@ -142,12 +157,14 @@ class VideoAnalysisStore:
         self._json_dir = self.csv_path.parent
 
     def save(self, result: VideoAnalysisResult) -> None:
-        """保存分析结果 (CSV + JSON)。"""
-        # Generate ID if not set
+        """保存分析结果 (CSV索引 + JSON详情)。"""
         if not result.analysis_id:
-            result.analysis_id = f"VA_{result.video_id}_{datetime.now(TZ_SHANGHAI).strftime('%Y%m%d%H%M%S%f')}"
+            ts = datetime.now(TZ_SHANGHAI).strftime("%Y%m%d%H%M%S%f")
+            result.analysis_id = f"VA_{result.video_id}_{ts}"
+        if not result.analyzed_at:
+            result.analyzed_at = datetime.now(TZ_SHANGHAI).isoformat()
 
-        # CSV
+        # CSV 索引
         existing = self._read_csv()
         existing_dict: dict[str, list[str]] = {
             r[0]: r for r in existing[1:] if len(r) > 0
@@ -212,7 +229,7 @@ if __name__ == "__main__":
     import tempfile
 
     print("=" * 60)
-    print("  VideoAnalysisResult — 自检")
+    print("  VideoAnalysisResult V2.0 — 自检 (Phase 3-3)")
     print("=" * 60)
 
     # 创建分析结果
@@ -228,6 +245,10 @@ if __name__ == "__main__":
         viral_reason="强数字对比 + 真实案例 + 本地信任感",
         turning_point="第15秒展示电费账单对比",
         closing_factor="本地案例 + 可上门测量",
+        # Phase 3-3 新增
+        conflict_pattern="电费高vs光伏省钱——制造认知冲突",
+        cta_analysis="评论区引导：让用户主动报面积，降低决策门槛",
+        user_resonance="别墅业主身份认同+省钱预期+本地可上门",
         viral_score=85,
         reusability_score=90,
         reusable=ReusableElements(
@@ -240,20 +261,52 @@ if __name__ == "__main__":
     print(f"  分析: {result.video_title}")
     print(f"  爆款指数: {result.viral_score}")
     print(f"  可复用度: {result.reusability_score}")
-    print(f"  钩子: {result.hook_3_seconds[:30]}...")
-    print(f"  可复用元素: {result.reusable.key_phrases}")
+    print(f"  冲突模式: {result.conflict_pattern}")
+    print(f"  CTA分析: {result.cta_analysis[:30]}...")
+    print(f"  用户共鸣: {result.user_resonance[:30]}...")
 
     # 序列化
     d = result.to_dict()
     assert d["viral_score"] == 85
-    assert d["reusable"]["key_phrases"] == ["我家XX平米", "一年省了X万", "真实案例"]
-    print("  ✓ to_dict 正常")
+    assert d["conflict_pattern"] == "电费高vs光伏省钱——制造认知冲突"
+    assert d["cta_analysis"].startswith("评论区引导")
+    assert d["user_resonance"].startswith("别墅业主身份认同")
+    print("  ✓ to_dict 正常 (含 Phase 3-3 字段)")
 
     # 反序列化
     r2 = VideoAnalysisResult.from_dict(d)
     assert r2.viral_score == 85
-    assert r2.reusable.key_phrases == ["我家XX平米", "一年省了X万", "真实案例"]
+    assert r2.conflict_pattern == "电费高vs光伏省钱——制造认知冲突"
+    assert r2.cta_analysis.startswith("评论区引导")
+    assert r2.user_resonance.startswith("别墅业主身份认同")
     print("  ✓ from_dict 正常")
+
+    # 兼容旧版数据 (无 Phase 3-3 字段)
+    old_data = {
+        "analysis_id": "VA_old_001",
+        "video_id": "dy_old",
+        "video_title": "旧版视频",
+        "hook_3_seconds": "旧钩子",
+        "pain_point": "旧痛点",
+        "customer_type": "别墅业主",
+        "video_structure": "旧结构",
+        "title_pattern": "旧标题",
+        "comment_trigger": "旧触发",
+        "viral_reason": "旧原因",
+        "turning_point": "旧转折",
+        "closing_factor": "旧成交",
+        "viral_score": 50,
+        "reusability_score": 40,
+        "analyzed_at": "2026-07-20T00:00:00",
+        "source_video_id": "",
+        "reusable": {"hook_template": "", "key_phrases": [], "angle_suggestions": []},
+    }
+    r3 = VideoAnalysisResult.from_dict(old_data)
+    assert r3.video_title == "旧版视频"
+    assert r3.conflict_pattern == ""  # 旧版数据默认空
+    assert r3.cta_analysis == ""
+    assert r3.user_resonance == ""
+    print("  ✓ 旧版数据兼容 (Phase 3-3 字段默认空)")
 
     # Store
     tmp = Path(tempfile.mkdtemp()) / "test_analysis.csv"
@@ -262,8 +315,17 @@ if __name__ == "__main__":
     loaded = store.get(result.analysis_id)
     assert loaded is not None
     assert loaded.viral_score == 85
+    assert loaded.conflict_pattern.startswith("电费高vs光伏省钱")
     print(f"  ✓ Store 保存/读取: {loaded.analysis_id}")
+
+    # CSV row 循环
+    row = result.to_csv_row()
+    r4 = VideoAnalysisResult.from_csv_row(row)
+    assert r4.conflict_pattern == result.conflict_pattern
+    assert r4.cta_analysis == result.cta_analysis
+    assert r4.user_resonance == result.user_resonance
+    print("  ✓ CSV row 循环 (含 Phase 3-3 字段)")
 
     tmp.unlink(missing_ok=True)
 
-    print("\n✓ VideoAnalysisResult 自检完成\n")
+    print("\n✓ VideoAnalysisResult V2.0 自检完成\n")
